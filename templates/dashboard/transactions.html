@@ -1,0 +1,844 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title> Belco Community Credit Union </title>
+  <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/aos.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/output.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
+      <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon.png' %}">
+</head>
+
+
+<style>
+
+       .logo-small {
+        width: 150px !important;
+        height: auto !important;
+        max-width: none !important;
+        margin-top: 20px;
+      }
+
+      .hidden-balance {
+  font-family: monospace;
+  letter-spacing: 2px;
+}
+
+</style>
+
+
+
+<body>
+  <!-- layout start -->
+  <div class="w-full layout-wrapper active">
+    <div class="w-full flex relative">
+   <aside class="block xl:block sm:hidden sidebar-wrapper w-[308px] fixed top-0 bg-white dark:bg-darkblack-600 h-full z-30">
+  <div class="sidebar-header relative border-r border-b border-r-[#F7F7F7] border-b-[#F7F7F7] dark:border-darkblack-400 w-full h-[108px] flex items-center pl-[50px] z-30">
+    <a href="{% url 'dashboard' %}">
+      <img src="{% static 'images/logo_white.png' %}" alt="Belco Community Credit Union Logo" class="block logo-small dark:hidden" />
+      <img src="{% static 'images/logo_white.png' %}" alt="Belco Community Credit Union Logo" class="hidden logo-small dark:block" />
+    </a>
+    <button type="button" class="drawer-btn absolute right-0 top-auto" title="Ctrl+b">
+      <span>
+        <svg width="16" height="40" viewBox="0 0 16 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 10C0 4.47715 4.47715 0 10 0H16V40H10C4.47715 40 0 35.5228 0 30V10Z" fill="#22C55E" />
+          <path d="M10 15L6 20.0049L10 25.0098" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </span>
+    </button>
+  </div>
+
+
+  <div class="sidebar-body pl-[48px] pt-[14px] w-full relative z-30 h-screen overflow-style-none overflow-y-scroll pb-[200px]">
+    <div class="nav-wrapper pr-[50px] mb-[36px]">
+      <div class="item-wrapper mb-5">
+        <h4 class="text-sm font-medium dark:text-bgray-50 text-bgray-700 border-b dark:border-darkblack-400 border-bgray-200 leading-7">Menu</h4>
+        <ul class="mt-2.5">
+          <li class="item py-[11px] text-bgray-900 dark:text-white">
+            <a href="{% url 'dashboard' %}">
+              <div class="flex items-center justify-between">
+                <div class="flex space-x-2.5 items-center">
+                  <span class="item-ico">
+                    <svg width="18" height="21" viewBox="0 0 18 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path class="path-1" d="M0 8.84719C0 7.99027 0.366443 7.17426 1.00691 6.60496L6.34255 1.86217C7.85809 0.515019 10.1419 0.515019 11.6575 1.86217L16.9931 6.60496C17.6336 7.17426 18 7.99027 18 8.84719V17C18 19.2091 16.2091 21 14 21H4C1.79086 21 0 19.2091 0 17V8.84719Z" fill="#1A202C" />
+                      <path class="path-2" d="M5 17C5 14.7909 6.79086 13 9 13C11.2091 13 13 14.7909 13 17V21H5V17Z" fill="#22C55E" />
+                    </svg>
+                  </span>
+                  <span class="item-text text-lg font-medium leading-none">Dashboard</span>
+                </div>
+              </div>
+            </a>
+          </li>
+          <li class="item py-[11px] text-bgray-900 dark:text-white">
+            <a href="{% url 'transactions' %}">
+              <div class="flex items-center justify-between">
+                <div class="flex space-x-2.5 items-center">
+                  <span class="item-ico">
+                    <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 16V6C18 3.79086 16.2091 2 14 2H4C1.79086 2 0 3.79086 0 6V16C0 18.2091 1.79086 20 4 20H14C16.2091 20 18 18.2091 18 16Z" fill="#1A202C" class="path-1" />
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 8C4.25 7.58579 4.58579 7.25 5 7.25H13C13.4142 7.25 13.75 7.58579 13.75 8C13.75 8.41421 13.4142 8.75 13 8.75H5C4.58579 8.75 4.25 8.41421 4.25 8Z" fill="#22C55E" class="path-2" />
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 12C4.25 11.5858 4.58579 11.25 5 11.25H13C13.4142 11.25 13.75 11.5858 13.75 12C13.75 12.4142 13.4142 12.75 13 12.75H5C4.58579 12.75 4.25 12.4142 4.25 12Z" fill="#22C55E" class="path-2" />
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 16C4.25 15.5858 4.58579 15.25 5 15.25H9C9.41421 15.25 9.75 15.5858 9.75 16C9.75 16.4142 9.41421 16.75 9 16.75H5C4.58579 16.75 4.25 16.4142 4.25 16Z" fill="#22C55E" class="path-2" />
+                      <path d="M11 0H7C5.89543 0 5 0.895431 5 2C5 3.10457 5.89543 4 7 4H11C12.1046 4 13 3.10457 13 2C13 0.895431 12.1046 0 11 0Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                  <span class="item-text text-lg font-medium leading-none">Transactions</span>
+                </div>
+              </div>
+            </a>
+          </li>
+         
+        </ul>
+      </div>
+      <div class="item-wrapper mb-5">
+        <h4 class="text-sm font-medium text-bgray-700 dark:text-bgray-50 border-b border-bgray-200 dark:border-darkblack-400 leading-7">Transfers</h4>
+        <ul class="mt-2.5">
+          <li class="item py-[11px] text-bgray-900 dark:text-white">
+            <a href="{% url 'local_transfer' %}">
+              <div class="flex items-center justify-between">
+                <div class="flex space-x-2.5 items-center">
+                  <span class="item-ico">
+                    <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 2C2 0.89543 2.89543 0 4 0H16C17.1046 0 18 0.89543 18 2V10C18 11.1046 17.1046 12 16 12H4C2.89543 12 2 11.1046 2 10V2Z" fill="#1A202C" class="path-1" />
+                      <path d="M10 3.5L6 7.5H8V10.5H12V7.5H14L10 3.5Z" fill="#22C55E" class="path-2" />
+                      <path d="M4 14C4 13.4477 4.44772 13 5 13H15C15.5523 13 16 13.4477 16 14V16C16 16.5523 15.5523 17 15 17H5C4.44772 17 4 16.5523 4 16V14Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                  <span class="item-text text-lg font-medium leading-none">Local Transfer</span>
+                </div>
+              </div>
+            </a>
+          </li>
+          <li class="item py-[11px] text-bgray-900 dark:text-white">
+            <a href="{% url 'international_transfer' %}">
+              <div class="flex items-center justify-between">
+                <div class="flex space-x-2.5 items-center">
+                  <span class="item-ico">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0Z" fill="#1A202C" class="path-1" />
+                      <path d="M15 8L12 11L9 8H11V6H13V8H15ZM9 16L12 13L15 16H13V18H11V16H9Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                  <span class="item-text text-lg font-medium leading-none">International Transfer</span>
+                </div>
+              </div>
+            </a>
+          </li>
+          <li class="item py-[11px] text-bgray-900 dark:text-white">
+            <a href="{% url 'deposit' %}">
+              <div class="flex items-center justify-between">
+                <div class="flex space-x-2.5 items-center">
+                  <span class="item-ico">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z" fill="#1A202C" class="path-1" />
+                      <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                  <span class="item-text text-lg font-medium leading-none">Deposit</span>
+                </div>
+              </div>
+            </a>
+          </li>
+          <li class="item py-[11px] text-bgray-900 dark:text-white">
+            <a href="{% url 'currency_swap' %}">
+              <div class="flex items-center justify-between">
+                <div class="flex space-x-2.5 items-center">
+                  <span class="item-ico">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0Z" fill="#1A202C" class="path-1" />
+                      <path d="M9 15L7 13L8.414 11.586L9 12.172V9H11V12.172L11.586 11.586L13 13L11 15H9ZM15 11L13 9L14.414 7.586L15 8.172V5H17V8.172L17.586 7.586L19 9L17 11H15Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                  <span class="item-text text-lg font-medium leading-none">Currency Swap</span>
+                </div>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="item-wrapper mb-5">
+        <h4 class="text-sm font-medium text-bgray-700 dark:text-bgray-50 border-b border-bgray-200 dark:border-darkblack-400 leading-7">Services</h4>
+        <ul class="mt-2.5">
+          <li class="item py-[11px] text-bgray-900 dark:text-white">
+            <a href="{% url 'loans' %}">
+              <div class="flex items-center justify-between">
+                <div class="flex space-x-2.5 items-center">
+                  <span class="item-ico">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z" fill="#1A202C" class="path-1" />
+                      <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                  <span class="item-text text-lg font-medium leading-none">Loans</span>
+                </div>
+              </div>
+            </a>
+          </li>
+          <li class="item py-[11px] text-bgray-900 dark:text-white">
+            <a href="{% url 'grants' %}">
+              <div class="flex items-center justify-between">
+                <div class="flex space-x-2.5 items-center">
+                  <span class="item-ico">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 11C18 15.9706 13.9706 20 9 20C4.02944 20 0 15.9706 0 11C0 6.02944 4.02944 2 9 2C13.9706 2 18 6.02944 18 11Z" fill="#1A202C" class="path-1" />
+                      <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                  <span class="item-text text-lg font-medium leading-none">Grants</span>
+                </div>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="item-wrapper mb-5">
+        <h4 class="text-sm font-medium text-bgray-700 dark:text-bgray-50 border-b border-bgray-200 dark:border-darkblack-400 leading-7">Account</h4>
+        <ul class="mt-2.5">
+          <li class="item py-[11px] text-bgray-900 dark:text-white">
+            <a href="{% url 'profile' %}">
+              <div class="flex items-center justify-between">
+                <div class="flex space-x-2.5 items-center">
+                  <span class="item-ico">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8.84849 0H7.15151C6.2143 0 5.45454 0.716345 5.45454 1.6C5.45454 2.61121 4.37259 3.25411 3.48444 2.77064L3.39424 2.72153C2.58258 2.27971 1.54473 2.54191 1.07612 3.30717L0.227636 4.69281C-0.240971 5.45808 0.0371217 6.43663 0.848773 6.87846C1.73734 7.36215 1.73734 8.63785 0.848771 9.12154C0.0371203 9.56337 -0.240972 10.5419 0.227635 11.3072L1.07612 12.6928C1.54473 13.4581 2.58258 13.7203 3.39424 13.2785L3.48444 13.2294C4.37259 12.7459 5.45454 13.3888 5.45454 14.4C5.45454 15.2837 6.2143 16 7.15151 16H8.84849C9.7857 16 10.5455 15.2837 10.5455 14.4C10.5455 13.3888 11.6274 12.7459 12.5156 13.2294L12.6058 13.2785C13.4174 13.7203 14.4553 13.4581 14.9239 12.6928L15.7724 11.3072C16.241 10.5419 15.9629 9.56336 15.1512 9.12153C14.2627 8.63784 14.2627 7.36216 15.1512 6.87847C15.9629 6.43664 16.241 5.45809 15.7724 4.69283L14.9239 3.30719C14.4553 2.54192 13.4174 2.27972 12.6058 2.72154L12.5156 2.77065C11.6274 3.25412 10.5455 2.61122 10.5455 1.6C10.5455 0.716344 9.7857 0 8.84849 0Z" fill="#1A202C" class="path-1" />
+                      <path d="M11 8C11 9.65685 9.65685 11 8 11C6.34315 11 5 9.65685 5 8C5 6.34315 6.34315 5 8 5C9.65685 5 11 6.34315 11 8Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                  <span class="item-text text-lg font-medium leading-none">Settings</span>
+                </div>
+              </div>
+            </a>
+          </li>
+          <li class="item py-[11px] text-bgray-900 dark:text-white">
+            <a href="mailto:info@belcoccu.com">
+              <div class="flex items-center justify-between">
+                <div class="flex space-x-2.5 items-center">
+                  <span class="item-ico">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 11C18 15.9706 13.9706 20 9 20C4.02944 20 0 15.9706 0 11C0 6.02944 4.02944 2 9 2C13.9706 2 18 6.02944 18 11Z" fill="#1A202C" class="path-1" />
+                      <path d="M9 15C9 15.5523 9.44772 16 10 16C10.5523 16 11 15.5523 11 15V12H14C14.5523 12 15 11.5523 15 11C15 10.4477 14.5523 10 14 10H11V7C11 6.44772 10.5523 6 10 6C9.44772 6 9 6.44772 9 7V10H6C5.44772 10 5 10.4477 5 11C5 11.5523 5.44772 12 6 12H9V15Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                  <span class="item-text text-lg font-medium leading-none">Support</span>
+                </div>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="copy-write-text">
+      <p class="text-sm text-[#969BA0]">&copy; 2025 Belco Community Credit Union. All Rights Reserved.</p>
+    </div>
+  </div>
+</aside>
+
+<div style="z-index: 25" class="aside-overlay block sm:hidden w-full h-full fixed left-0 top-0 bg-black bg-opacity-30"></div>
+
+<aside class="sm:block hidden relative w-[96px] bg-white dark:bg-black">
+  <div class="w-full sidebar-wrapper-collapse relative top-0 z-30">
+    <div class="sidebar-header bg-white dark:bg-darkblack-600 dark:border-darkblack-500 sticky top-0 border-r border-b border-r-[#F7F7F7] border-b-[#F7F7F7] w-full h-[108px] flex items-center justify-center z-20">
+      <a href="index.html">
+        <img src="{% static 'images/logo_white.png' %}" alt="Belco Community Credit Union Logo" class="dark:hidden block" />
+        <img src="{% static 'images/logo_white.png' %}" alt="Belco Community Credit Union Logo" class="hidden dark:block" />
+      </a>
+    </div>
+    <div class="sidebar-body pt-[14px] w-full">
+      <div class="flex flex-col items-center">
+        <div class="nav-wrapper mb-[36px]">
+          <div class="item-wrapper mb-5">
+            <ul class="mt-2.5 flex justify-center items-center flex-col">
+              <li class="item py-[11px] px-[43px]">
+                <a href="{% url 'dashboard' %}">
+                  <span class="item-ico">
+                    <svg width="18" height="21" viewBox="0 0 18 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path class="path-1" d="M0 8.84719C0 7.99027 0.366443 7.17426 1.00691 6.60496L6.34255 1.86217C7.85809 0.515019 10.1419 0.515019 11.6575 1.86217L16.9931 6.60496C17.6336 7.17426 18 7.99027 18 8.84719V17C18 19.2091 16.2091 21 14 21H4C1.79086 21 0 19.2091 0 17V8.84719Z" fill="#1A202C" />
+                      <path class U="path-2" d="M5 17C5 14.7909 6.79086 13 9 13C11.2091 13 13 14.7909 13 17V21H5V17Z" fill="#22C55E" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+              <li class="item py-[11px] px-[43px]">
+                <a href="{% url 'transactions' %}">
+                  <span class="item-ico">
+                    <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 16V6C18 3.79086 16.2091 2 14 2H4C1.79086 2 0 3.79086 0 6V16C0 18.2091 1.79086 20 4 20H14C16.2091 20 18 18.2091 18 16Z" fill="#1A202C" class="path-1" />
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 8C4.25 7.58579 4.58579 7.25 5 7.25H13C13.4142 7.25 13.75 7.58579 13.75 8C13.75 8.41421 13.4142 8.75 13 8.75H5C4.58579 8.75 4.25 8.41421 4.25 8Z" fill="#22C55E" class="path-2" />
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 12C4.25 11.5858 4.58579 11.25 5 11.25H13C13.4142 11.25 13.75 11.5858 13.75 12C13.75 12.4142 13.4142 12.75 13 12.75H5C4.58579 12.75 4.25 12.4142 4.25 12Z" fill="#22C55E" class="path-2" />
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 16C4.25 15.5858 4.58579 15.25 5 15.25H9C9.41421 15.25 9.75 15.5858 9.75 16C9.75 16.4142 9.41421 16.75 9 16.75H5C4.58579 16.75 4.25 16.4142 4.25 16Z" fill="#22C55E" class="path-2" />
+                      <path d="M11 0H7C5.89543 0 5 0.895431 5 2C5 3.10457 5.89543 4 7 4H11C12.1046 4 13 3.10457 13 2C13 0.895431 12.1046 0 11 0Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+              <li class="item py-[11px] px-[43px]">
+                <a href="{% url 'local_transfer' %}">
+                  <span class="item-ico">
+                    <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 2C2 0.89543 2.89543 0 4 0H16C17.1046 0 18 0.89543 18 2V10C18 11.1046 17.1046 12 16 12H4C2.89543 12 2 11.1046 2 10V2Z" fill="#1A202C" class="path-1" />
+                      <path d="M10 3.5L6 7.5H8V10.5H12V7.5H14L10 3.5Z" fill="#22C55E" class="path-2" />
+                      <path d="M4 14C4 13.4477 4.44772 13 5 13H15C15.5523 13 16 13.4477 16 14V16C16 16.5523 15.5523 17 15 17H5C4.44772 17 4 16.5523 4 16V14Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+              <li class="item py-[11px] px-[43px]">
+                <a href="{% url 'international_transfer' %}">
+                  <span class="item-ico">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0Z" fill="#1A202C" class="path-1" />
+                      <path d="M15 8L12 11L9 8H11V6H13V8H15ZM9 16L12 13L15 16H13V18H11V16H9Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+              <li class="item py-[11px] px-[43px]">
+                <a href="{% url 'deposit' %}">
+                  <span class="item-ico">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z" fill="#1A202C" class="path-1" />
+                      <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+              <li class="item py-[11px] px-[43px]">
+                <a href="{% url 'currency_swap' %}">
+                  <span class="item-ico">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0Z" fill="#1A202C" class="path-1" />
+                      <path d="M9 15L7 13L8.414 11.586L9 12.172V9H11V12.172L11.586 11.586L13 13L11 15H9ZM15 11L13 9L14.414 7.586L15 8.172V5H17V8.172L17.586 7.586L19 9L17 11H15Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+              <li class="item py-[11px] px-[43px]">
+                <a href="{% url 'loans' %}">
+                  <span class="item-ico">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z" fill="#1A202C" class="path-1" />
+                      <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+              <li class="item py-[11px] px-[43px]">
+                <a href="{% url 'grants' %}">
+                  <span class="item-ico">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 11C18 15.9706 13.9706 20 9 20C4.02944 20 0 15.9706 0 11C0 6.02944 4.02944 2 9 2C13.9706 2 18 6.02944 18 11Z" fill="#1A202C" class="path-1" />
+                      <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+              <li class="item py-[11px] px-[43px]">
+                <a href="{% url 'profile' %}">
+                  <span class="item-ico">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8.84849 0H7.15151C6.2143 0 5.45454 0.716345 5.45454 1.6C5.45454 2.61121 4.37259 3.25411 3.48444 2.77064L3.39424 2.72153C2.58258 2.27971 1.54473 2.54191 1.07612 3.30717L0.227636 4.69281C-0.240971 5.45808 0.0371217 6.43663 0.848773 6.87846C1.73734 7.36215 1.73734 8.63785 0.848771 9.12154C0.0371203 9.56337 -0.240972 10.5419 0.227635 11.3072L1.07612 12.6928C1.54473 13.4581 2.58258 13.7203 3.39424 13.2785L3.48444 13.2294C4.37259 12.7459 5.45454 13.3888 5.45454 14.4C5.45454 15.2837 6.2143 16 7.15151 16H8.84849C9.7857 16 10.5455 15.2837 10.5455 14.4C10.5455 13.3888 11.6274 12.7459 12.5156 13.2294L12.6058 13.2785C13.4174 13.7203 14.4553 13.4581 14.9239 12.6928L15.7724 11.3072C16.241 10.5419 15.9629 9.56336 15.1512 9.12153C14.2627 8.63784 14.2627 7.36216 15.1512 6.87847C15.9629 6.43664 16.241 5.45809 15.7724 4.69283L14.9239 3.30719C14.4553 2.54192 13.4174 2.27972 12.6058 2.72154L12.5156 2.77065C11.6274 3.25412 10.5455 2.61122 10.5455 1.6C10.5455 0.716344 9.7857 0 8.84849 0Z" fill="#1A202C" class="path-1" />
+                      <path d="M11 8C11 9.65685 9.65685 11 8 11C6.34315 11 5 9.65685 5 8C5 6.34315 6.34315 5 8 5C9.65685 5 11 6.34315 11 8Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+              <li class="item py-[11px] px-[43px]">
+                <a href="mailto:info@belcoccu.com">
+                  <span class="item-ico">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 11C18Попробуйте 15.9706 13.9706 20 9 20C4.02944 20 0 15.9706 0 11C0 6.02944 4.02944 2 9 2C13.9706 2 18 6.02944 18 11Z" fill="#1A202C" class="path-1" />
+                      <path d="M9 15C9 15.5523 9.44772 16 10 16C10.5523 16 11 15.5523 11 15V12H14C14.5523 12 15 11.5523 15 11C15 10.4477 14.5523 10 14 10H11V7C11 6.44772 10.5523 6 10 6C9.44772 6 9 6.44772 9 7V10H6C5.44772 10 5 10.4477 5 11C5 11.5523 5.44772 12 6 12H9V15Z" fill="#22C55E" class="path-2" />
+                    </svg>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+</aside>
+
+
+        
+      <div class="body-wrapper dark:bg-darkblack-500 flex-1 overflow-x-hidden">
+        <header class="md:block hidden header-wrapper w-full fixed z-30">
+          <div
+            class="w-full h-[108px] dark:bg-darkblack-600 bg-white flex items-center justify-between 2xl:px-[76px] px-10 relative">
+            <button title="Ctrl+b" type="button" class="drawer-btn absolute left-0 top-auto transform rotate-180">
+              <span>
+                <svg width="16" height="40" viewBox="0 0 16 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 10C0 4.47715 4.47715 0 10 0H16V40H10C4.47715 40 0 35.5228 0 30V10Z" fill="#22C55E" />
+                  <path d="M10 15L6 20.0049L10 25.0098" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </span>
+            </button>
+            <!--              page-title-->
+            <div>
+              <h3 class="lg:text-3xl text-xl dark:text-bgray-50 text-bgray-900 font-bold lg:leading-[36.4px]">
+                Dashboard
+              </h3>
+            
+            </div>
+           
+            <!--  quick access-->
+            <div class="quick-access-wrapper relative">
+              <div class="flex space-x-[43px] items-center">
+                <div class="xl:flex hidden space-x-5 items-center">
+                  <button type="button" id="theme-toggle"
+                    class="w-[52px] h-[52px] rounded-[12px] border border-success-300 dark:border-darkblack-400 flex justify-center items-center relative">
+                    <span class="block dark:hidden">
+                      <svg class="stroke-bgray-900" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M18.3284 14.8687C13.249 14.8687 9.13135 10.751 9.13135 5.67163C9.13135 4.74246 9.26914 3.84548 9.5254 3C5.74897 4.14461 3 7.65276 3 11.803C3 16.8824 7.11765 21 12.197 21C16.3472 21 19.8554 18.251 21 14.4746C20.1545 14.7309 19.2575 14.8687 18.3284 14.8687Z"
+                          stroke-width="1.5" stroke-linejoin="round" />
+                      </svg>
+                    </span>
+                    <span class="hidden  dark:block">
+                      <svg class="stroke-bgray-900 dark:stroke-bgray-50" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="5" stroke-width="1.5" />
+                        <path d="M12 2V4" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M12 20V22" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M20.6602 7L18.9281 8" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M5.07178 16L3.33973 17" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M3.33984 7L5.07189 8" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M18.9282 16L20.6603 17" stroke-width="1.5" stroke-linecap="round" />
+                      </svg>
+                    </span>
+                  </button>
+                  <button onclick="notificationAction()" id="notification-btn" type="button"
+                    class="w-[52px] h-[52px] rounded-[12px] border border-success-300 dark:border-darkblack-400 flex justify-center items-center relative">
+                    <span
+                      class="w-3.5 h-3.5 rounded-full bg-bgray-300 dark:bg-bgray-600 dark:border-none border-2 border-white absolute -right-[5px] -top-[2px]">
+                    </span>
+                    <svg class="fill-bgray-900 dark:fill-white" width="24" height="25" viewBox="0 0 24 25" fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M19.9718 6.78149L19.2803 7.07178L19.9718 6.78149ZM19.3571 7.25473C19.5174 7.63666 19.957 7.81631 20.3389 7.65599C20.7209 7.49567 20.9005 7.05609 20.7402 6.67416L19.3571 7.25473ZM16.7784 2.77061C16.3937 2.61687 15.9573 2.80404 15.8036 3.18867C15.6498 3.5733 15.837 4.00973 16.2216 4.16347L16.7784 2.77061ZM16.6672 3.53388L16.3889 4.23031L16.6672 3.53388ZM4.0768 6.78149L4.76834 7.07178L4.0768 6.78149ZM3.30846 6.67416C3.14813 7.05609 3.32778 7.49567 3.70971 7.65599C4.09164 7.81631 4.53122 7.63666 4.69154 7.25473L3.30846 6.67416ZM7.82701 4.16347C8.21164 4.00973 8.39881 3.5733 8.24507 3.18867C8.09134 2.80405 7.65491 2.61687 7.27028 2.77061L7.82701 4.16347ZM7.38142 3.53388L7.10305 2.83745V2.83745L7.38142 3.53388ZM18.2395 9.93743L17.4943 10.0221V10.0221L18.2395 9.93743ZM18.6867 13.8746L19.4319 13.7899V13.7899L18.6867 13.8746ZM5.31328 13.8746L4.56807 13.7899L5.31328 13.8746ZM5.76046 9.93743L6.50567 10.0221L5.76046 9.93743ZM4.44779 15.83L3.87686 15.3436H3.87686L4.44779 15.83ZM19.5522 15.83L18.9813 16.3164L18.9813 16.3164L19.5522 15.83ZM14.2699 5.33931H13.5199C13.5199 5.65996 13.7238 5.94513 14.0272 6.04893L14.2699 5.33931ZM9.73005 5.33931L9.97284 6.04893C10.2762 5.94513 10.4801 5.65996 10.4801 5.33931H9.73005ZM15.7022 21.2175C15.8477 20.8296 15.6512 20.3973 15.2634 20.2518C14.8755 20.1064 14.4432 20.3029 14.2978 20.6907L15.7022 21.2175ZM9.70223 20.6907C9.55678 20.3029 9.12446 20.1064 8.73663 20.2518C8.34879 20.3973 8.15231 20.8296 8.29777 21.2175L9.70223 20.6907ZM19.2803 7.07178L19.3571 7.25473L20.7402 6.67416L20.6634 6.4912L19.2803 7.07178ZM16.2216 4.16347L16.3889 4.23031L16.9456 2.83745L16.7784 2.77061L16.2216 4.16347ZM20.6634 6.4912C19.9638 4.82468 18.6244 3.50849 16.9456 2.83745L16.3889 4.23031C17.6948 4.7523 18.7364 5.77599 19.2803 7.07178L20.6634 6.4912ZM3.38526 6.4912L3.30846 6.67416L4.69154 7.25473L4.76834 7.07178L3.38526 6.4912ZM7.27028 2.77061L7.10305 2.83745L7.65979 4.23031L7.82701 4.16347L7.27028 2.77061ZM4.76834 7.07178C5.31227 5.77599 6.35384 4.7523 7.65979 4.23031L7.10305 2.83745C5.4242 3.50849 4.08481 4.82468 3.38526 6.4912L4.76834 7.07178ZM17.7772 18.2056H6.22281V19.7056H17.7772V18.2056ZM17.4943 10.0221L17.9415 13.9592L19.4319 13.7899L18.9847 9.85279L17.4943 10.0221ZM6.05849 13.9592L6.50567 10.0221L5.01526 9.85279L4.56807 13.7899L6.05849 13.9592ZM5.01872 16.3164C5.59608 15.6386 5.96025 14.8241 6.05849 13.9592L4.56807 13.7899C4.50522 14.3432 4.2708 14.8812 3.87686 15.3436L5.01872 16.3164ZM17.9415 13.9592C18.0398 14.8241 18.4039 15.6386 18.9813 16.3164L20.1231 15.3436C19.7292 14.8812 19.4948 14.3432 19.4319 13.7899L17.9415 13.9592ZM6.22281 18.2056C5.5675 18.2056 5.10418 17.8817 4.89044 17.5053C4.68417 17.1421 4.68715 16.7056 5.01872 16.3164L3.87686 15.3436C3.11139 16.2422 3.0877 17.3685 3.5861 18.2461C4.07704 19.1105 5.04975 19.7056 6.22281 19.7056V18.2056ZM17.7772 19.7056C18.9503 19.7056 19.923 19.1105 20.4139 18.2461C20.9123 17.3685 20.8886 16.2422 20.1231 15.3436L18.9813 16.3164C19.3129 16.7056 19.3158 17.1421 19.1096 17.5053C18.8958 17.8817 18.4325 18.2056 17.7772 18.2056V19.7056ZM15.0199 5.33931V5.23567H13.5199V5.33931H15.0199ZM18.9847 9.85279C18.7054 7.39374 16.8802 5.43969 14.5127 4.6297L14.0272 6.04893C15.9445 6.70491 17.2914 8.23516 17.4943 10.0221L18.9847 9.85279ZM10.4801 5.33931V5.23567H8.98005V5.33931H10.4801ZM6.50567 10.0221C6.70863 8.23516 8.05551 6.70491 9.97284 6.04893L9.48727 4.6297C7.1198 5.43969 5.29456 7.39374 5.01526 9.85279L6.50567 10.0221ZM12 3.71741C12.84 3.71741 13.5199 4.39768 13.5199 5.23567H15.0199C15.0199 3.56821 13.6673 2.21741 12 2.21741V3.71741ZM12 2.21741C10.3327 2.21741 8.98005 3.56821 8.98005 5.23567H10.4801C10.4801 4.39768 11.16 3.71741 12 3.71741V2.21741ZM14.2978 20.6907C13.9752 21.5508 13.0849 22.2026 12 22.2026V23.7026C13.6851 23.7026 15.1514 22.686 15.7022 21.2175L14.2978 20.6907ZM12 22.2026C10.9151 22.2026 10.0248 21.5508 9.70223 20.6907L8.29777 21.2175C8.84856 22.686 10.3149 23.7026 12 23.7026V22.2026Z" />
+                    </svg>
+                  </button>
+                 
+                 
+                </div>
+                <div class="xl:block hidden h-[48px] w-[1px] bg-bgray-300 dark:bg-darkblack-400"></div>
+                <!--                author-->
+                <div onclick="profileAction()" class="flex lg:space-x-3 space-x-0 cursor-pointer">
+                  <div class="w-[52px] h-[52px] rounded-xl border border-bgray-300 overflow-hidden">
+                         {% if request.user.profile_picture %}
+                        <img class="object-cover" src="{{ request.user.profile_picture.url }}" alt="avatar" />
+                    {% else %}
+                        <img class="object-cover" src="{% static 'assets/images/avatar/default_profile.png' %}" alt="default avatar" />
+                    {% endif %}
+                  </div>
+                  <div class="2xl:block hidden">
+                    <div class="flex space-x-2.5 items-center">
+                      <h3 class="text-base dark:text-white text-bgray-900 font-bold leading-[28px]">
+                        John Doe
+                      </h3>
+                      <span>
+                        <svg class="stroke-bgray-900 dark:stroke-white" width="24" height="24" viewBox="0 0 24 24"
+                          fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M7 10L12 14L17 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                    </div>
+                    <p class="text-sm font-medium leading-[20px] dark:text-bgray-50 text-bgray-600">
+                      Super Admin
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!--                notification ,message, store-->
+              <div class="notification-popup-wrapper">
+                <div onclick="notificationAction()" id="noti-outside"
+                  class="w-full h-full fixed -left-[43px] top-0 hidden"></div>
+                <div id="notification-box" style="
+                      filter: drop-shadow(12px 12px 40px rgba(0, 0, 0, 0.08));
+                    "
+                  class="w-[400px] bg-white dark:bg-darkblack-600 absolute -left-[347px] top-[81px] rounded-lg hidden">
+                  <div class="w-full pt-[66px] pb-[75px] relative">
+                    <div class="w-full h-[66px] flex justify-between items-center absolute left-0 top-0 px-8">
+                      <h3 class="text-xl text-bgray-900 dark:text-white font-bold">
+                        Notifications
+                      </h3>
+                      <span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M10.325 4.317C10.751 2.561 13.249 2.561 13.675 4.317C13.7389 4.5808 13.8642 4.82578 14.0407 5.032C14.2172 5.23822 14.4399 5.39985 14.6907 5.50375C14.9414 5.60764 15.2132 5.65085 15.4838 5.62987C15.7544 5.60889 16.0162 5.5243 16.248 5.383C17.791 4.443 19.558 6.209 18.618 7.753C18.4769 7.98466 18.3924 8.24634 18.3715 8.51677C18.3506 8.78721 18.3938 9.05877 18.4975 9.30938C18.6013 9.55999 18.7627 9.78258 18.9687 9.95905C19.1747 10.1355 19.4194 10.2609 19.683 10.325C21.439 10.751 21.439 13.249 19.683 13.675C19.4192 13.7389 19.1742 13.8642 18.968 14.0407C18.7618 14.2172 18.6001 14.4399 18.4963 14.6907C18.3924 14.9414 18.3491 15.2132 18.3701 15.4838C18.3911 15.7544 18.4757 16.0162 18.617 16.248C19.557 17.791 17.791 19.558 16.247 18.618C16.0153 18.4769 15.7537 18.3924 15.4832 18.3715C15.2128 18.3506 14.9412 18.3938 14.6906 18.4975C14.44 18.6013 14.2174 18.7627 14.0409 18.9687C13.8645 19.1747 13.7391 19.4194 13.675 19.683C13.249 21.439 10.751 21.439 10.325 19.683C10.2611 19.4192 10.1358 19.1742 9.95929 18.968C9.7828 18.7618 9.56011 18.6001 9.30935 18.4963C9.05859 18.3924 8.78683 18.3491 8.51621 18.3701C8.24559 18.3911 7.98375 18.4757 7.752 18.617C6.209 19.557 4.442 17.791 5.382 16.247C5.5231 16.0153 5.60755 15.7537 5.62848 15.4832C5.64942 15.2128 5.60624 14.9412 5.50247 14.6906C5.3987 14.44 5.23726 14.2174 5.03127 14.0409C4.82529 13.8645 4.58056 13.7391 4.317 13.675C2.561 13.249 2.561 10.751 4.317 10.325C4.5808 10.2611 4.82578 10.1358 5.032 9.95929C5.23822 9.7828 5.39985 9.56011 5.50375 9.30935C5.60764 9.05859 5.65085 8.78683 5.62987 8.51621C5.60889 8.24559 5.5243 7.98375 5.383 7.752C4.443 6.209 6.209 4.442 7.753 5.382C8.753 5.99 10.049 5.452 10.325 4.317Z"
+                            stroke="#A0AEC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                          <path
+                            d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+                            stroke="#A0AEC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                    </div>
+                    <ul class="w-full h-[250px] overflow-y-scroll scroll-style-1">
+                      <li
+                        class="py-4 pl-6 pr-[50px] hover:bg-bgray-100 dark:hover:bg-darkblack-500 border-b border-bgray-200 dark:border-darkblack-400">
+                        <a href="#">
+                          <div class="noti-item">
+                            <p class="font-medium text-sm text-bgray-600 dark:text-bgray-50 mb-1">
+                              <strong class="text-bgray-900 dark:text-white">James Eusobio</strong>
+                              send a new payment for
+                              <strong class="text-bgray-900 dark:text-white">SEO writing</strong>
+                              totaling
+                              <span class="text-success-300">$199.00</span>
+                            </p>
+                            <span class="text-xs font-medium text-bgray-500">23 mins ago</span>
+                          </div>
+                        </a>
+                      </li>
+                      
+                     
+                    
+                    </ul>
+                    <div class="w-full h-[75px] flex justify-between items-center absolute left-0 bottom-0 px-8">
+                      <div>
+                        <a href="#">
+                          <div class="flex space-x-2 items-center">
+                            <span>
+                              <svg width="22" height="12" viewBox="0 0 22 12" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 6L11 11L21 1M1 6L6 11M11 6L16 1" stroke="#0CAF60" stroke-width="1.5"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                              </svg>
+                            </span>
+                            <span class="text-sm font-semibold text-success-300">
+                              Mark all as read
+                            </span>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+              <div class="profile-wrapper">
+                <div onclick="profileAction()" class="profile-outside w-full h-full fixed -left-[43px] top-0 hidden">
+                </div>
+                <div style="
+                      filter: drop-shadow(12px 12px 40px rgba(0, 0, 0, 0.08));
+                    "
+                  class="profile-box w-[300px] overflow-hidden bg-white dark:bg-darkblack-600 absolute right-0 top-[81px] rounded-lg hidden">
+                  <div class="w-full px-3 py-2 relative">
+                    <div>
+                      <ul>
+                        <li class="w-full">
+                          <a href="{% url 'profile' %}">
+                            <div
+                              class="flex space-x-[18px] items-center p-[14px] hover:bg-bgray-100 hover:dark:bg-darkblack-500  rounded-lg text-bgray-600 hover:text-bgray-900">
+                              <div class="w-[20px]">
+                                <span>
+                                  <svg class="stroke-bgray-900 dark:stroke-bgray-50" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                      d="M12.1197 12.7805C12.0497 12.7705 11.9597 12.7705 11.8797 12.7805C10.1197 12.7205 8.71973 11.2805 8.71973 9.51047C8.71973 7.70047 10.1797 6.23047 11.9997 6.23047C13.8097 6.23047 15.2797 7.70047 15.2797 9.51047C15.2697 11.2805 13.8797 12.7205 12.1197 12.7805Z"
+                                      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path
+                                      d="M18.7398 19.3796C16.9598 21.0096 14.5998 21.9996 11.9998 21.9996C9.39977 21.9996 7.03977 21.0096 5.25977 19.3796C5.35977 18.4396 5.95977 17.5196 7.02977 16.7996C9.76977 14.9796 14.2498 14.9796 16.9698 16.7996C18.0398 17.5196 18.6398 18.4396 18.7398 19.3796Z"
+                                      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path
+                                      d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                  </svg>
+                                </span>
+                              </div>
+                              <div class="flex-1">
+                                <span class="text-sm font-semibold text-bgray-900 dark:text-white">My Profile</span>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                       
+                        <li class="w-full">
+                          <a href="#">
+                            <div class="flex space-x-[18px] items-center p-[14px] rounded-lg text-success-300">
+                              <div class="w-[20px]">
+                                <span>
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                      d="M15 10L13.7071 11.2929C13.3166 11.6834 13.3166 12.3166 13.7071 12.7071L15 14M14 12L22 12M6 20C3.79086 20 2 18.2091 2 16V8C2 5.79086 3.79086 4 6 4M6 20C8.20914 20 10 18.2091 10 16V8C10 5.79086 8.20914 4 6 4M6 20H14C16.2091 20 18 18.2091 18 16M6 4H14C16.2091 4 18 5.79086 18 8"
+                                      stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" />
+                                  </svg>
+                                </span>
+                              </div>
+                            <div class="flex-1">
+                                   <a href="{% url 'logout' %}" class="flex-1">
+                                        <span class="text-sm font-semibold">Log Out</span>
+                                    </a>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+
+
+        <header class="md:hidden block mobile-wrapper w-full fixed z-20">
+          <div class="w-full h-[80px] bg-white dark:bg-darkblack-600 flex justify-between items-center">
+            <div class="w-full h-full flex items-center space-x-5">
+              <button type="button" class="drawer-btn transform rotate-180">
+                <span>
+                  <svg width="16" height="40" viewBox="0 0 16 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 10C0 4.47715 4.47715 0 10 0H16V40H10C4.47715 40 0 35.5228 0 30V10Z" fill="#F7F7F7" />
+                    <path d="M10 15L6 20.0049L10 25.0098" stroke="#A0AEC0" stroke-width="1.2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              <div class="flex items-center justify-center">
+                <a href="/">
+                  <img src="{% static 'images/logo_white.png' %}" class="block dark:hidden logo-small" alt="logo" />
+                  <img src="{% static 'images/logo_white.png' %}" class="hidden dark:block logo-small " alt="logo" />
+                </a>
+              </div>
+            </div>
+            <div class="mr-2">
+              <div onclick="profileAction()" class="flex lg:space-x-3 space-x-0 cursor-pointer">
+                <div class="w-[52px] h-[52px] rounded-xl border border-bgray-300 overflow-hidden">
+                       {% if request.user.profile_picture %}
+                        <img class="object-cover" src="{{ request.user.profile_picture.url }}" alt="avatar" />
+                    {% else %}
+                        <img class="object-cover" src="{% static 'assets/images/avatar/default_profile.png' %}" alt="default avatar" />
+                    {% endif %}
+                </div>
+                <div class="2xl:block hidden">
+                  <div class="flex space-x-2.5 items-center">
+                    <h3 class="text-base text-bgray-900 font-bold leading-[28px]">
+                      John Doe
+                    </h3>
+                    <span>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 10L12 14L17 10" stroke="#28303F" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
+                    </span>
+                  </div>
+                  <p class="text-sm font-medium leading-[20px] text-bgray-600">
+                    Super Admin
+                  </p>
+                </div>
+              </div>
+
+              <div class="profile-wrapper">
+                <div onclick="profileAction()" class="profile-outside w-full h-full fixed -left-[43px] top-0 hidden">
+                </div>
+                <div style="
+                      filter: drop-shadow(12px 12px 40px rgba(0, 0, 0, 0.08));
+                    "
+                  class="profile-box w-[300px] overflow-hidden bg-white absolute right-0 top-[81px] rounded-lg hidden">
+                  <div class="w-full px-3 py-2 relative">
+                    <div>
+                      <ul>
+                        <li class="w-full">
+                          <a href="{% url 'profile' %}">
+                            <div
+                              class="flex space-x-[18px] items-center p-[14px] hover:bg-bgray-100 rounded-lg text-bgray-600 hover:text-bgray-900">
+                              <div class="w-[20px]">
+                                <span>
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                      d="M12.1197 12.7805C12.0497 12.7705 11.9597 12.7705 11.8797 12.7805C10.1197 12.7205 8.71973 11.2805 8.71973 9.51047C8.71973 7.70047 10.1797 6.23047 11.9997 6.23047C13.8097 6.23047 15.2797 7.70047 15.2797 9.51047C15.2697 11.2805 13.8797 12.7205 12.1197 12.7805Z"
+                                      stroke="#111827" stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round" />
+                                    <path
+                                      d="M18.7398 19.3796C16.9598 21.0096 14.5998 21.9996 11.9998 21.9996C9.39977 21.9996 7.03977 21.0096 5.25977 19.3796C5.35977 18.4396 5.95977 17.5196 7.02977 16.7996C9.76977 14.9796 14.2498 14.9796 16.9698 16.7996C18.0398 17.5196 18.6398 18.4396 18.7398 19.3796Z"
+                                      stroke="#111827" stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round" />
+                                    <path
+                                      d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                      stroke="#111827" stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round" />
+                                  </svg>
+                                </span>
+                              </div>
+                              <div class="flex-1">
+                                <span class="text-sm font-semibold">My Profile</span>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                       
+                        <li class="w-full">
+                          <a href="#">
+                            <div class="flex space-x-[18px] items-center p-[14px] rounded-lg text-success-300">
+                              <div class="w-[20px]">
+                                <span>
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                      d="M15 10L13.7071 11.2929C13.3166 11.6834 13.3166 12.3166 13.7071 12.7071L15 14M14 12L22 12M6 20C3.79086 20 2 18.2091 2 16V8C2 5.79086 3.79086 4 6 4M6 20C8.20914 20 10 18.2091 10 16V8C10 5.79086 8.20914 4 6 4M6 20H14C16.2091 20 18 18.2091 18 16M6 4H14C16.2091 4 18 5.79086 18 8"
+                                      stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" />
+                                  </svg>
+                                </span>
+                              </div>
+                            <div class="flex-1">
+                                   <a href="{% url 'logout' %}" class="flex-1">
+                                        <span class="text-sm font-semibold">Log Out</span>
+                                    </a>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                 
+                    <div>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+
+        <main
+  class="w-full min-h-screen xl:px-[48px] px-6 sm:pt-[156px] pt-[100px] flex flex-col"
+>
+  <!-- write your code here-->
+  <div class="2xl:flex 2xl:space-x-[48px] flex-1">
+    <section class="2xl:flex-1 2xl:mb-0 mb-6">
+
+     <!-- Transaction Table -->
+<div class="w-full py-[20px] px-[24px] rounded-lg bg-white dark:bg-darkblack-600 h-full flex flex-col">
+  <div class="flex flex-col space-y-5">
+    <div style="overflow-y:scroll; max-height:400px;" class="table-content w-full border border-bgray-300 dark:border-darkblack-400 rounded-lg">
+      <table class="w-full border-collapse">
+        <!-- Table Head -->
+        <thead class="sticky top-0 bg-bgray-100 dark:bg-darkblack-500 z-10">
+          <tr class="border-b border-bgray-300 dark:border-darkblack-400">
+            <th class="py-4 px-6 text-left font-medium text-bgray-600 dark:text-bgray-50">Transaction Date</th>
+            <th class="py-4 px-6 text-left font-medium text-bgray-600 dark:text-bgray-50">Amount</th>
+            <th class="py-4 px-6 text-left font-medium text-bgray-600 dark:text-bgray-50">Transaction Type</th>
+            <th class="py-4 px-6 text-left font-medium text-bgray-600 dark:text-bgray-50">Status</th>
+            <th class="py-4 px-6 text-left font-medium text-bgray-600 dark:text-bgray-50">Reference</th>
+            <th class="py-4 px-6"></th>
+          </tr>
+        </thead>
+
+        <!-- Table Body -->
+        <tbody>
+          {% for transaction in transactions %}
+          <tr class="border-b border-bgray-300 dark:border-darkblack-400">
+            <!-- Transaction Date -->
+            <td class="py-4 px-6">
+              <p class="font-medium text-base text-bgray-900 dark:text-white">
+                {{ transaction.transaction_date|date:"Y-m-d H:i" }}
+              </p>
+            </td>
+
+            <!-- Amount -->
+            <td class="py-4 px-6">
+              <p class="font-semibold text-base text-bgray-900 dark:text-white">
+                ${{ transaction.amount|intcomma }}
+              </p>
+            </td>
+
+            <!-- Type -->
+            <td class="py-4 px-6">
+              <p class="font-medium text-base text-bgray-900 dark:text-white">
+                {{ transaction.transaction_type|title }}
+              </p>
+            </td>
+
+            <!-- Status with color -->
+            <td class="py-4 px-6">
+              <span style="
+                display:inline-block;
+                padding:2px 10px;
+                border-radius:12px;
+                font-size:12px;
+                font-weight:500;
+                {% if transaction.status == 'pending' %}
+                  background-color:#FEF3C7; color:#92400E;
+                {% elif transaction.status == 'approved' or transaction.status == 'successful' %}
+                  background-color:#D1FAE5; color:#065F46;
+                {% elif transaction.status == 'failed' or transaction.status == 'rejected' %}
+                  background-color:#FEE2E2; color:#B91C1C;
+                {% else %}
+                  background-color:#E5E7EB; color:#374151;
+                {% endif %}
+              ">
+                {{ transaction.status|title }}
+              </span>
+            </td>
+
+            <!-- Reference -->
+            <td class="py-4 px-6">
+              <p class="font-medium text-base text-bgray-900 dark:text-white">
+                {{ transaction.reference }}
+              </p>
+            </td>
+
+            <!-- Options Button -->
+            <td class="py-4 px-6 text-center">
+              <button type="button">
+                <svg width="18" height="4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 2c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1Zm-7 0c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1Zm14 0c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1Z" stroke="#A0AEC0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="py-6 px-6 text-center text-bgray-600 dark:text-bgray-50">
+              No transactions found.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+    </section>
+  </div>
+  <!-- write your code here-->
+</main>
+
+        </div>
+      </div>
+    </div>
+
+    <!--scripts -->
+    <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/flatpickr.js' %}"></script>
+  
+
+    <script src="{% static 'assets/js/main.js' %}"></script>
+  </body>
+</html>
