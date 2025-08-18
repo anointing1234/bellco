@@ -203,32 +203,6 @@ class Account(AbstractBaseUser, PermissionsMixin):
         super().save(*args, **kwargs)
 
 
-    # def generate_random_number(self, length=8):
-    #     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
-
-    # def generate_unique_code(self, field_name, length=8):
-    #     code = self.generate_random_number(length)
-    #     while Account.objects.filter(**{field_name: code}).exists():
-    #         code = self.generate_random_number(length)
-    #     return code
-
-    # def save(self, *args, **kwargs):
-    #     # if not self.account_id:
-    #     #     self.account_id = self.generate_unique_code("account_id", 8)
-    #     if not self.account_number:
-    #         self.account_number = self.generate_unique_code("account_number", 10)
-    #     if not self.username:
-    #         self.username = self.generate_username()
-    #     # if not self.cot_code:
-    #     #     self.cot_code = self.generate_unique_code("cot_code")
-    #     # if not self.tax_code:
-    #     #     self.tax_code = self.generate_unique_code("tax_code")
-    #     # if not self.imf_code:
-    #     #     self.imf_code = self.generate_unique_code("imf_code")
-    #     if not self.pin:
-    #         self.pin = self.generate_unique_code("pin", 6)
-    #     super().save(*args, **kwargs)
-
 class AccountBalance(models.Model):
     account = models.OneToOneField(
         settings.AUTH_USER_MODEL,

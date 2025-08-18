@@ -130,9 +130,10 @@ def signup_view(request):
 
 
 
+
 def generate_unique_account_id():
-    """Generate a unique 8-character alphanumeric Account ID."""
-    length = 8
+    """Generate a unique 5-character alphanumeric Account ID."""
+    length = 5
     characters = string.ascii_uppercase + string.digits
     while True:
         account_id = ''.join(random.choices(characters, k=length))
