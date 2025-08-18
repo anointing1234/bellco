@@ -37,7 +37,7 @@ SECRET_KEY = 'django-insecure-@^^&_3r$p1tr#jxmb#nx3q*oi#wo%bxr!x^n(a%61pu@=#jq%3
 DEBUG = True
 
 # ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ["https://belcoccu.com "]
+CSRF_TRUSTED_ORIGINS = ["https://belcoccu.com"]
 ALLOWED_HOSTS = ["belcoccu.com"]
 
 
