@@ -18,6 +18,7 @@ import os
 from django.conf import settings
 from .utils import generate_unique_account_id
 from django.db import transaction
+import uuid
 
 
 # Unregister the default Group admin to avoid AlreadyRegistered error
@@ -377,7 +378,7 @@ class DepositAdmin(ModelAdmin):
                 deposit.status = 'completed'
                 deposit.save()
 
-                # Update corresponding transaction status
+                # Get or create transaction
                 transaction = Transaction.objects.filter(
                     user=deposit.user,
                     amount=deposit.amount,
@@ -385,7 +386,20 @@ class DepositAdmin(ModelAdmin):
                     to_account=deposit.account,
                     status='pending'
                 ).first()
-                if transaction:
+                
+                if not transaction:
+                    # Create new transaction if none exists
+                    transaction = Transaction.objects.create(
+                        user=deposit.user,
+                        amount=deposit.amount,
+                        transaction_type='deposit',
+                        to_account=deposit.account,
+                        status='completed',
+                        description=f"Deposit via {deposit.network}",
+                        reference=deposit.TNX if deposit.TNX else str(uuid.uuid4())[:50]
+                    )
+                else:
+                    # Update existing transaction
                     transaction.status = 'completed'
                     transaction.save()
 
@@ -394,6 +408,7 @@ class DepositAdmin(ModelAdmin):
                 self.message_user(request, f"Deposit for {deposit.user} is not pending", messages.WARNING)
     
     approve_deposit.short_description = "Approve selected deposits"
+
 
 
 @admin.register(PaymentGateway)
