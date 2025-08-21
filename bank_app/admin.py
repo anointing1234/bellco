@@ -18,6 +18,7 @@ import os
 from django.conf import settings
 from .utils import generate_unique_account_id
 from django.db import transaction
+from django.utils import timezone
 import uuid
 
 
@@ -179,21 +180,72 @@ class AccountAdmin(ModelAdmin):
 
 
 
-
-
 @admin.register(AccountBalance)
 class AccountBalanceAdmin(ModelAdmin):
     list_display = ['account', 'checking_balance', 'savings_balance', 'credit_balance']
+    list_editable = ['checking_balance', 'savings_balance', 'credit_balance']  # ✅ balances editable in list view
     search_fields = ['account__email', 'account__username']
     inlines = [CurrencyBalanceInline]
     list_per_page = 25
     autocomplete_fields = ['account']
 
+    def save_model(self, request, obj, form, change):
+        balance_changes = {}
+
+        if change:  # Editing existing record
+            old_obj = AccountBalance.objects.get(pk=obj.pk)
+
+            if obj.checking_balance != old_obj.checking_balance:
+                balance_changes['CHECKING'] = obj.checking_balance - old_obj.checking_balance
+            if obj.savings_balance != old_obj.savings_balance:
+                balance_changes['SAVINGS'] = obj.savings_balance - old_obj.savings_balance
+            if obj.credit_balance != old_obj.credit_balance:
+                balance_changes['CREDIT'] = obj.credit_balance - old_obj.credit_balance
+        else:
+            # New record
+            if obj.checking_balance > 0:
+                balance_changes['CHECKING'] = obj.checking_balance
+            if obj.savings_balance > 0:
+                balance_changes['SAVINGS'] = obj.savings_balance
+            if obj.credit_balance > 0:
+                balance_changes['CREDIT'] = obj.credit_balance
+
+        # Save object AFTER tracking changes
+        super().save_model(request, obj, form, change)
+
+        # Create Deposit & Transaction for positive changes
+        for account_type, change_amount in balance_changes.items():
+            if change_amount > 0:
+                Deposit.objects.create(
+                    user=obj.account,
+                    amount=change_amount,
+                    account=account_type,
+                    status="completed",
+                    date=timezone.now()
+                )
+
+                Transaction.objects.create(
+                    user=obj.account,
+                    amount=change_amount,
+                    transaction_type="deposit",
+                    description=f"Admin deposit to {account_type} balance",
+                    status="completed",
+                    transaction_date=timezone.now(),
+                    to_account=str(obj.account.id)
+                )
+
+    def save_related(self, request, form, formsets, change):
+        """
+        Ensures balance changes done in list_editable also trigger deposits/transactions.
+        """
+        super().save_related(request, form, formsets, change)
+        self.save_model(request, form.instance, form, change)
 
 
 @admin.register(CurrencyBalance)
 class CurrencyBalanceAdmin(ModelAdmin):
     list_display = ['get_user_email', 'currency', 'balance_type', 'balance']
+    list_editable = ['balance']  # ✅ balance editable directly
     list_filter = ['currency', 'balance_type']
     search_fields = ['account_balance__account__email', 'account_balance__account__username']
     list_per_page = 25
@@ -203,6 +255,47 @@ class CurrencyBalanceAdmin(ModelAdmin):
         return obj.account_balance.account.email
     get_user_email.short_description = "User Email"
 
+    def save_model(self, request, obj, form, change):
+        balance_change = None
+
+        if change:  # Editing existing record
+            old_obj = CurrencyBalance.objects.get(pk=obj.pk)
+            if obj.balance != old_obj.balance:
+                balance_change = obj.balance - old_obj.balance
+        else:
+            # New record
+            if obj.balance > 0:
+                balance_change = obj.balance
+
+        # Save object AFTER tracking changes
+        super().save_model(request, obj, form, change)
+
+        # If balance increased, create Deposit & Transaction
+        if balance_change and balance_change > 0:
+            Deposit.objects.create(
+                user=obj.account_balance.account,
+                amount=balance_change,
+                account=obj.balance_type,
+                status="completed",
+                date=timezone.now()
+            )
+
+            Transaction.objects.create(
+                user=obj.account_balance.account,
+                amount=balance_change,
+                transaction_type="deposit",
+                description=f"Admin deposit to {obj.currency} {obj.balance_type} balance",
+                status="completed",
+                transaction_date=timezone.now(),
+                to_account=str(obj.account_balance.account.id)
+            )
+
+    def save_related(self, request, form, formsets, change):
+        """
+        Ensures balance changes done in list_editable also trigger deposits/transactions.
+        """
+        super().save_related(request, form, formsets, change)
+        self.save_model(request, form.instance, form, change)
 
 
 @admin.register(Card)
@@ -337,7 +430,7 @@ class TransactionAdmin(ModelAdmin):
     list_display = ['user', 'transaction_type', 'amount', 'status', 'transaction_date']
     list_filter = ['transaction_type', 'status', 'region']
     search_fields = ['user__email', 'reference', 'description']
-    readonly_fields = ['transaction_date', 'reference']
+    readonly_fields = ['reference']
     list_per_page = 25
     autocomplete_fields = ['user']
 
@@ -346,9 +439,10 @@ class TransactionAdmin(ModelAdmin):
 @admin.register(Deposit)
 class DepositAdmin(ModelAdmin):
     list_display = ['user', 'amount', 'account', 'network', 'status', 'date']
+    list_editable = ['amount', 'status','date']  # ✅ Make amount & status editable
     list_filter = ['account', 'network', 'status']
     search_fields = ['user__email', 'TNX']
-    readonly_fields = ['date', 'TNX']
+    readonly_fields = ['TNX']
     list_per_page = 25
     autocomplete_fields = ['user']
     actions = ['approve_deposit']
@@ -356,60 +450,74 @@ class DepositAdmin(ModelAdmin):
     def approve_deposit(self, request, queryset):
         for deposit in queryset:
             if deposit.status == 'pending':
-                # Get or create AccountBalance
-                account_balance, _ = AccountBalance.objects.get_or_create(account=deposit.user)
-                
-                # Update balance based on account type and currency
-                if deposit.account in ['CHECKING', 'SAVINGS', 'CREDIT']:
-                    balance_field = f"{deposit.account.lower()}_balance"
-                    setattr(account_balance, balance_field, getattr(account_balance, balance_field) + deposit.amount)
-                    account_balance.save()
-                else:
-                    # Update CurrencyBalance for non-USD currencies
-                    currency_balance, _ = CurrencyBalance.objects.get_or_create(
-                        account_balance=account_balance,
-                        currency=deposit.account,
-                        balance_type='CHECKING'
+                try:
+                    with transaction.atomic():
+                        # Get or create AccountBalance
+                        account_balance, _ = AccountBalance.objects.get_or_create(account=deposit.user)
+                        
+                        # Update balance based on account type and currency
+                        if deposit.account in ['CHECKING', 'SAVINGS', 'CREDIT']:
+                            balance_field = f"{deposit.account.lower()}_balance"
+                            setattr(account_balance, balance_field, getattr(account_balance, balance_field) + deposit.amount)
+                            account_balance.save()
+                        else:
+                            # Update CurrencyBalance for non-USD currencies
+                            currency_balance, _ = CurrencyBalance.objects.get_or_create(
+                                account_balance=account_balance,
+                                currency=deposit.account,
+                                balance_type='CHECKING'
+                            )
+                            currency_balance.balance += deposit.amount
+                            currency_balance.save()
+
+                        # Update deposit status
+                        deposit.status = 'completed'
+                        deposit.save()
+
+                        # Get or create transaction
+                        transaction_obj = Transaction.objects.filter(
+                            user=deposit.user,
+                            amount=deposit.amount,
+                            transaction_type='deposit',
+                            to_account=deposit.account,
+                            status='pending'
+                        ).first()
+                        
+                        if not transaction_obj:
+                            # Create new transaction if none exists
+                            transaction_obj = Transaction.objects.create(
+                                user=deposit.user,
+                                amount=deposit.amount,
+                                transaction_type='deposit',
+                                to_account=deposit.account,
+                                status='completed',
+                                description=f"Deposit via {deposit.network}",
+                                reference=deposit.TNX if deposit.TNX else str(uuid.uuid4())[:50]
+                            )
+                        else:
+                            # Update existing transaction
+                            transaction_obj.status = 'completed'
+                            transaction_obj.save()
+
+                        self.message_user(
+                            request,
+                            f"✅ Deposit of {deposit.amount} {deposit.account} approved for {deposit.user}",
+                            messages.SUCCESS
+                        )
+                except Exception as e:
+                    self.message_user(
+                        request,
+                        f"❌ Error approving deposit for {deposit.user}: {str(e)}",
+                        messages.ERROR
                     )
-                    currency_balance.balance += deposit.amount
-                    currency_balance.save()
-
-                # Update deposit status
-                deposit.status = 'completed'
-                deposit.save()
-
-                # Get or create transaction
-                transaction = Transaction.objects.filter(
-                    user=deposit.user,
-                    amount=deposit.amount,
-                    transaction_type='deposit',
-                    to_account=deposit.account,
-                    status='pending'
-                ).first()
-                
-                if not transaction:
-                    # Create new transaction if none exists
-                    transaction = Transaction.objects.create(
-                        user=deposit.user,
-                        amount=deposit.amount,
-                        transaction_type='deposit',
-                        to_account=deposit.account,
-                        status='completed',
-                        description=f"Deposit via {deposit.network}",
-                        reference=deposit.TNX if deposit.TNX else str(uuid.uuid4())[:50]
-                    )
-                else:
-                    # Update existing transaction
-                    transaction.status = 'completed'
-                    transaction.save()
-
-                self.message_user(request, f"Deposit of {deposit.amount} {deposit.account} approved for {deposit.user}", messages.SUCCESS)
             else:
-                self.message_user(request, f"Deposit for {deposit.user} is not pending", messages.WARNING)
-    
+                self.message_user(
+                    request,
+                    f"⚠️ Deposit for {deposit.user} is not pending",
+                    messages.WARNING
+                )
+
     approve_deposit.short_description = "Approve selected deposits"
-
-
 
 @admin.register(PaymentGateway)
 class PaymentGatewayAdmin(ModelAdmin):
@@ -431,9 +539,10 @@ class BeneficiaryAdmin(ModelAdmin):
 @admin.register(Transfer)
 class TransferAdmin(ModelAdmin):
     list_display = ['user', 'beneficiary', 'amount', 'currency', 'status', 'date']
+    list_editable = ['amount', 'status','date']  # ✅ Make amount & status editable
     list_filter = ['currency', 'status', 'region']
     search_fields = ['user__email', 'beneficiary__full_name', 'reference']
-    readonly_fields = ['date', 'reference']
+    readonly_fields = ['reference']
     list_per_page = 25
     autocomplete_fields = ['user', 'beneficiary']
     actions = ['approve_transfer', 'decline_transfer']
@@ -503,10 +612,6 @@ class TransferAdmin(ModelAdmin):
                 self.message_user(request, f"❌ Error declining transfer {transfer.reference}: {str(e)}", messages.ERROR)
 
     decline_transfer.short_description = "Decline selected transfers"
-
-
-
-
 
 
 @admin.register(ExchangeRate)

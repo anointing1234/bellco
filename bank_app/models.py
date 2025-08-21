@@ -500,7 +500,7 @@ class Transaction(models.Model):
         on_delete=models.CASCADE,
         related_name='transactions'
     )
-    transaction_date = models.DateTimeField(auto_now_add=True)
+    transaction_date = models.DateTimeField(default=timezone.now)
     amount = models.DecimalField(
         max_digits=12,
         decimal_places=2,
@@ -587,7 +587,7 @@ class Deposit(models.Model):
         choices=BALANCE_TYPE_CHOICES,
         default='SAVINGS'
     )
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -713,7 +713,7 @@ class Transfer(models.Model):
         unique=True,
         blank=True
     )
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)
     reason = models.TextField(blank=True, null=True)
     region = models.CharField(
         max_length=50,
