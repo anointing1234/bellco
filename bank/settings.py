@@ -43,7 +43,7 @@ ALLOWED_HOSTS = ["belcoccu.com"]
 
 # Expire sessions after 1 minute of inactivity
 SESSION_COOKIE_AGE = 60  # 60 seconds = 1 minute
-SESSION_SAVE_EVERY_REQUEST = True  # Refresh session timer on each request
+SESSION_SAVE_EVERY_REQUEST = False  # Refresh session timer on each request
 
 
 
