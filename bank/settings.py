@@ -44,7 +44,7 @@ SESSION_COOKIE_SECURE = True  # Use secure cookies over HTTPS
 CSRF_COOKIE_SECURE = True    # Use secure CSRF cookies over HTTPS
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Expire session when browser closes
 SESSION_COOKIE_AGE = 0
-SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS       # Ensure no expiration time is set for session cookies  # Ensures sessions end when browser closes
+     # Ensure no expiration time is set for session cookies  # Ensures sessions end when browser closes
 
 # Application definition
 AUTH_USER_MODEL = 'bank_app.Account'
