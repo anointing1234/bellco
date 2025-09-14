@@ -45,6 +45,7 @@ ALLOWED_HOSTS = ["belcoccu.com"]
 
 
 
+
 # Application definition
 AUTH_USER_MODEL = 'bank_app.Account'
 
@@ -295,6 +296,11 @@ UNFOLD = {
                     #     "icon": "code",
                     #     "link": reverse_lazy("admin:bank_app_transfercode_changelist"),
                     # },
+                    # {
+                    #     "title": _("Transfer Codes"),
+                    #     "icon": "code",
+                    #     "link": reverse_lazy("admin:bank_app_transfercode_changelist"),
+                    # },
                     {
                         "title": _("Beneficiaries"),
                         "icon": "person_add",
@@ -333,6 +339,11 @@ UNFOLD = {
                         "icon": "receipt",
                         "link": reverse_lazy("admin:bank_app_transaction_changelist"),
                     },
+                    # {
+                    #     "title": _("Reset Passwords"),
+                    #     "icon": "lock_reset",
+                    #     "link": reverse_lazy("admin:bank_app_resetpassword_changelist"),
+                    # },
                     # {
                     #     "title": _("Reset Passwords"),
                     #     "icon": "lock_reset",
