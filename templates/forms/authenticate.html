@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Sign In - Belco Community Credit Union</title>
+    <title>Two-Factor Authentication - Belco Community Credit Union</title>
     <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}" />
     <link rel="stylesheet" href="{% static 'assets/css/aos.css' %}" />
     <link rel="stylesheet" href="{% static 'assets/css/output.css' %}" />
@@ -43,12 +43,13 @@
    
    padding:20px;
    border-radius:30px;
-   max-width:500px;
+   max-width:400px;
    box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1), 0 10px 20px rgba(2, 12, 146, 0.05);
   }
     </style>
 
-    <style>
+
+        <style>
 .page-loading {
     position: fixed;
     top: 0;
@@ -122,12 +123,11 @@
 @keyframes progressSlide {0%{left:-100%;}50%{left:0%;}100%{left:100%;}}
 </style>
 
-
   </head>
   <body class="bg-white dark:bg-darkblack-500">
 
-
     
+
       <!-- Ultra Modern Page Loader -->
     <div class="page-loading active">
         <div class="page-loading-inner">
@@ -167,8 +167,6 @@
         </div>
     </div>
 
-
-
     <div id="spinner" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -178,106 +176,42 @@
     <section class="min-h-screen flex flex-col lg:flex-row">
    
       <!-- Left Section -->
-      <div   class="lg:w-1/2 flex flex-col justify-center  px-4 xl:pl-8 py-6 rounded-2xl ">
-           <header class="text-center ">
+      <div style="margin-top:80px;"  class="lg:w-1/2 flex flex-col justify-center   px-4 xl:pl-8 py-6 rounded-2xl ">
+           <header class="text-center  ">
             <img class="logo-small mx-auto mb-6" src="{% static 'images/logo_white.png' %}" alt="Belco Community Credit Union Logo" />
 
           </header>
         <div class=" w-full mx-auto login-card ">
           <header class="text-center mb-6">
         
-            <h2
-              class="text-bgray-900 dark:text-white text-3xl font-semibold font-poppins mb-1"
-            >
-              Sign in
-            </h2>
-            <p class="font-urbanis text-sm font-medium text-bgray-600 dark:text-bgray-50">
-              Access your Belco Community Credit Union
-            </p>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Two-Factor Authentication</h2>
+                    <p class="text-sm text-white dark:text-green-300">Enter the 6-digit code sent to your email</p>
           </header>
-        <form id="signin-form" class="space-y-3">
+       <form id="signin-form" class="space-y-3 px-4 sm:px-0">
   {% csrf_token %}
-  
-  <!-- Username -->
-  <div class="w-80 mx-auto">
-    <label for="username" class="block text-xs font-medium text-bgray-600 dark:text-bgray-50 mb-1">
-      User id or Email
+
+  <!-- PIN Input -->
+  <div class="relative w-full max-w-xs mx-auto">
+    <label
+      for="pin"
+      class="block text-xs font-medium text-bgray-600 dark:text-bgray-50 mb-1 text-center"
+    >
+      <i class="fas fa-shield-alt mr-2"></i>
+      Enter your 6-digit code
     </label>
+
     <input
-      id="username"
+      id="pin"
       type="text"
-      name="identifier"
+      name="pin"
+      maxlength="6"
+      pattern="\d{6}"
       class="text-bgray-800 dark:text-white dark:bg-darkblack-500 dark:border-darkblack-400 
-             border border-bgray-300 h-10 w-full focus:border-success-300 focus:ring-0 
-             rounded-lg px-3 placeholder:text-bgray-500 placeholder:text-sm"
-      placeholder="User id or Email"
+             border border-bgray-300 h-16 w-full max-w-xs focus:border-success-300 focus:ring-0 
+             rounded-lg px-3 text-center font-mono tracking-[0.5em] text-3xl placeholder:text-bgray-500"
+      placeholder="••••••"
       required
     />
-  </div>
-
-  <!-- Password -->
-  <div class="relative w-80 mx-auto">
-    <label for="password" class="block text-xs font-medium text-bgray-600 dark:text-bgray-50 mb-1">
-      Password
-    </label>
-    <input
-      id="password"
-      type="password"
-      name="password"
-      class="text-bgray-800 dark:text-white dark:bg-darkblack-500 dark:border-darkblack-400 
-             border border-bgray-300 h-10 w-full focus:border-success-300 focus:ring-0 
-             rounded-lg px-3 placeholder:text-bgray-500 placeholder:text-sm"
-      placeholder="Password"
-      required
-      minlength="8"
-    />
-    <button type="button" class="absolute top-2.5 right-2 toggle-password" aria-label="Toggle password visibility">
-      <svg
-        class="eye-icon w-4 h-4"
-        viewBox="0 0 22 20"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          class="eye-open"
-          d="M11 3C15 3 18.33 5.33 21 10C18.33 14.67 15 17 11 17C7 17 3.67 14.67 1 10C3.67 5.33 7 3 11 3ZM11 15C14.14 15 17 12.76 18.95 10C17 7.24 14.14 5 11 5C7.86 5 5 7.24 3.05 10C5 12.76 7.86 15 11 15ZM11 7C12.6569 7 14 8.34315 14 10C14 11.6569 12.6569 13 11 13C9.34315 13 8 11.6569 8 10C8 8.34315 9.34315 7 11 7Z"
-          fill="#718096"
-        />
-        <path
-          class="eye-closed hidden"
-          d="M2 1L20 19M9.58 8.58C9.21 8.96 9 9.47 9 10C9 10.53 9.21 11.04 9.58 11.42C9.96 11.79 10.47 12 11 12C11.53 12 12.04 11.79 12.41 11.42M8.36 3.36C9.22 3.12 10.11 3 11 3C15 3 18.33 5.33 21 10C20.22 11.36 19.39 12.52 18.5 13.49M16.36 15.35C14.73 16.45 12.94 17 11 17C7 17 3.67 14.67 1 10C2.37 7.61 3.91 5.83 5.63 4.66"
-          stroke="#718096"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </button>
-  </div>
-
-  <!-- Remember & Forgot -->
-  <div class="flex justify-between mb-4 w-80 mx-auto">
-    <div class="flex items-center space-x-2">
-      <input
-        type="checkbox"
-        class="w-4 h-4 dark:bg-darkblack-500 focus:ring-transparent rounded-md border border-bgray-300 
-               focus:accent-success-300 text-success-300"
-        name="remember"
-        id="remember"
-      />
-      <label for="remember" class="text-bgray-900 dark:text-white text-sm font-semibold">
-        Remember me
-      </label>
-    </div>
-    <div>
-      <a
-        href="{% url 'reset' %}"
-        data-target="#multi-step-modal"
-        class="modal-open text-success-300 font-semibold text-sm underline"
-      >
-        Forgot Password?
-      </a>
-    </div>
   </div>
 
   <!-- Submit -->
@@ -286,16 +220,26 @@
     class="py-2.5 flex items-center justify-center text-white font-semibold bg-success-300 
            hover:bg-success-400 transition-all rounded-lg w-full text-sm mx-auto"
   >
-    <i class="fas fa-sign-in-alt mr-2 group-hover:translate-x-1 transition-transform text-sm"></i>
-    Sign In
+    Verify Code
   </button>
-</form>
 
-          <p class="text-center text-bgray-900 dark:text-bgray-50 text-sm font-medium pt-4">
-            Don’t have an account?
-            <a href="{% url 'signup' %}" class="font-semibold underline">Sign Up</a>
-          </p>
-     
+
+</form>
+<div class="mt-4">
+  <button id="resend-code-btn"
+     class="w-full py-2.5 px-4 flex items-center justify-center text-sm font-medium 
+            text-indigo-600 dark:text-white 
+            bg-indigo-50 dark:bg-indigo-900/40 
+            rounded-lg border border-indigo-200 dark:border-indigo-700
+            hover:bg-indigo-100 dark:hover:bg-indigo-800 
+            transition-all duration-300 group">
+    <i class="fas fa-redo mr-2 text-xs group-hover:rotate-180 transition-transform"></i>
+    send Verification Code
+  </button>
+</div>
+
+
+      
           
         </div>
                     <!-- Enhanced Footer Links -->
@@ -323,10 +267,7 @@
                 <span>Terms</span>
               </a>
             </div>
-            <p class="text-xs text-white max-w-xs mx-auto leading-relaxed">
-              By signing in, you agree to our Terms of Service and Privacy Policy. Your
-              data is protected with bank-grade security.
-            </p>
+          
           </div>
 
       </div>
@@ -336,82 +277,75 @@
       <div
         class="lg:w-1/2 hidden lg:flex flex-col justify-center items-center bg-[#F6FAFF] dark:bg-darkblack-600 pt-6 relative"
       >
-        <ul>
-          <li class="absolute top-6 left-6">
-            <img src="{% static 'assets/images/shapes/square.svg' %}" alt="" class="w-6 h-6" />
-          </li>
-          <li class="absolute right-8 top-8">
-            <img src="{% static 'assets/images/shapes/vline.svg' %}" alt="" class="w-6 h-6" />
-          </li>
-        </ul>
+
         <div class="mb-6">
-          <img
-            src="{% static 'assets/images/illustration/signup.svg' %}"
-            alt=""
-            class="illustration"
-          />
+              <i style="color:green;" class="fas  fa-shield-alt text-3xl"></i>
         </div>
         <div class="text-center max-w-md mb-2">
           <h3
             class="text-bgray-900 dark:text-white font-semibold font-poppins text-2xl mb-2"
           >
-            Speedy, Easy and Fast
+       Account Security
           </h3>
-          <p class="text-bgray-600 dark:text-darkblack-300 text-xs font-medium">
-            Join Belco Community Credit Union to manage your finances with ease, access exclusive member benefits, and enjoy personalized banking services tailored to your needs.
+          <p class="text-white text-xs  font-medium">
+        Two-Factor Authentication
+          </p>
+            <p class="text-white text-xs  font-medium">
+       Two-Factor Authentication adds an extra layer of security to your Belco Community Credit Union Account.
           </p>
         </div>
          <!-- Enhanced Features Grid -->
             <div class="grid grid-cols-2 gap-4 w-full max-w-md">
-                <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <div class="group dark:text-white flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
                     <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas text-white fa-shield-alt text-sm"></i>
+                        <i class="fas fa-shield-alt text-sm"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-semibold text-white">Bank-Grade Security</h3>
-                        <p class="text-xs text-white">256-bit encryption</p>
+                        <h3 class="text-sm font-semibold">Extra Security</h3>
+                        <p class="text-xs text-white/70">Enhanced protection</p>
                     </div>
                 </div>
-                <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <div class="group dark:text-white flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
                     <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class=" text-white fas fa-bolt text-sm"></i>
+                        <i class="fas fa-envelope text-sm"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm text-white font-semibold">Instant Transfers</h3>
-                        <p class="text-xs text-white">Real-time processing</p>
+                        <h3 class="text-sm font-semibold">Email Verification</h3>
+                        <p class="text-xs text-white/70">Code delivery</p>
                     </div>
                 </div>
-                <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <div class="group dark:text-white flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
                     <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-globe text-white text-sm"></i>
+                        <i class="fas fa-key text-sm"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm text-white font-semibold">Global Reach</h3>
-                        <p class="text-xs text-white">200+ countries</p>
+                        <h3 class="text-sm font-semibold">Secure Access</h3>
+                        <p class="text-xs text-white/70">Safe login</p>
                     </div>
                 </div>
-                <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <div class="group flex dark:text-white items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
                     <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas text-white fa-mobile-alt text-sm"></i>
+                        <i class="fas fa-lock text-sm"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm text-white font-semibold">Mobile First</h3>
-                        <p class="text-xs text-white">iOS & Android</p>
+                        <h3 class="text-sm font-semibold">Account Protection</h3>
+                        <p class="text-xs text-white/70">Data security</p>
                     </div>
+                </div>
                 </div>
             </div>
       </div>
-    </section>
 
       <!-- Scripts -->
       <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
       <script src="{% static 'assets/js/aos.js' %}"></script>
       <script src="{% static 'assets/js/slick.min.js' %}"></script>
- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-      <script>
-       AOS.init();
+
+<script>
+AOS.init();
 
 // Password visibility toggle
 document.querySelectorAll('.toggle-password').forEach(button => {
@@ -431,19 +365,20 @@ document.querySelectorAll('.toggle-password').forEach(button => {
   });
 });
 
+// Show/hide page spinner
 function showSpinner() {
   document.getElementById('spinner').classList.remove('hidden');
 }
-
 function hideSpinner() {
   document.getElementById('spinner').classList.add('hidden');
 }
 
-function showAlert(message, type, redirectUrl = null) {
-  console.log(`Showing alert: ${message}, Type: ${type}, URL: ${redirectUrl}`); // Debug alert
+// Toastify wrapper
+function showToast(message, type="success") {
+  showSpinner(); // Show spinner immediately
   Toastify({
     text: message,
-    duration: type === "success" ? 3000 : 4000, // 3s for success, 4s for others
+    duration: type === "success" ? 2500 : 4000,
     close: true,
     gravity: "top",
     position: "right",
@@ -456,29 +391,46 @@ function showAlert(message, type, redirectUrl = null) {
       borderRadius: "10px",
       boxShadow: "0 6px 16px rgba(0,0,0,0.4)",
       fontFamily: "'Arial', sans-serif",
-      fontSize: "16px",
+      fontSize: "14px",
       fontWeight: "500",
-      padding: "12px 20px",
-      maxWidth: "300px",
+      padding: "10px 18px",
+      maxWidth: "280px",
       lineHeight: "1.4",
       border: "1px solid rgba(255,255,255,0.1)",
     },
-    onClick: function() {
-      if (redirectUrl && type !== "success") { // Only redirect on click for non-success messages
-        window.location.href = redirectUrl;
-      }
-    }
+    onClick: function() { hideSpinner(); }
   }).showToast();
-
-  // Auto-redirect for success after 3 seconds
-  if (type === "success" && redirectUrl) {
-    setTimeout(() => {
-      window.location.href = redirectUrl;
-    }, 3000);
-  }
+  // Hide spinner after toast duration
+  setTimeout(hideSpinner, type === "success" ? 2500 : 4000);
 }
 
-function login(event) {
+// Resend Verification Code button
+document.getElementById("resend-code-btn").addEventListener("click", function(e) {
+  e.preventDefault();
+  showSpinner();
+
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  fetch("{% url 'send_2FA_code' %}", {
+    method: "POST",
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+      "X-CSRFToken": csrfToken
+    },
+    credentials: "same-origin"
+  })
+  .then(async (response) => {
+    let data;
+    try { data = await response.json(); } 
+    catch { showToast("Invalid server response. Try again.", "error"); return; }
+
+    if (response.ok && data.success) showToast(data.message || "Verification code sent!", "success");
+    else showToast(data.message || "Failed to resend code. Try again.", "error");
+  })
+  .catch((err) => { console.error(err); showToast("Something went wrong. Please try again.", "error"); });
+});
+
+// Two-Factor Authentication form
+function verifyTwoFactor(event) {
   event.preventDefault();
   showSpinner();
 
@@ -486,44 +438,50 @@ function login(event) {
   const formData = new FormData(form);
   const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
 
-  fetch("{% url 'login_view' %}", {
+  fetch("{% url 'authen_two_factor' %}", {
     method: 'POST',
     body: formData,
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
       'X-CSRFToken': csrfToken
-    }
+    },
+    credentials: 'same-origin'
   })
   .then(async (response) => {
     let data;
-    try {
-      data = await response.json();
-    } catch (error) {
-      hideSpinner();
-      showAlert('Invalid server response. Please try again.', 'error');
-      return;
-    }
+    try { data = await response.json(); } 
+    catch { hideSpinner(); showToast('Invalid server response. Please try again.', 'error'); return; }
 
     hideSpinner();
 
     if (response.ok && data.success) {
-      showAlert(data.message || 'Login successful!', 'success', data.redirect_url || '{% url "dashboard" %}');
+      showToast(data.message || 'Login successful!', 'success');
+      if (data.redirect_url) setTimeout(() => window.location.href = data.redirect_url, 3000);
     } else {
-      showAlert(data.message || 'Invalid credentials. Please try again.', 'error');
+      showToast(data.message || 'Invalid verification code. Please try again.', 'error');
     }
   })
   .catch((error) => {
     hideSpinner();
-    showAlert('Something went wrong. Please try again later.', 'error');
+    showToast('Something went wrong. Please try again later.', 'error');
     console.error('Fetch error:', error);
   });
 }
 
-document.getElementById('signin-form').addEventListener('submit', login);
-      </script>
+document.getElementById('signin-form').addEventListener('submit', verifyTwoFactor);
+
+// Page preloader
+window.addEventListener('load', () => {
+  const preloader = document.querySelector('.page-loading');
+  setTimeout(() => {
+    preloader.classList.remove('active');
+    setTimeout(() => { preloader.style.display = 'none'; }, 1500);
+  }, 1500);
+});
+</script>
 
 
-      <script>
+<script>
 window.addEventListener('load', () => {
     const preloader = document.querySelector('.page-loading');
     
@@ -537,9 +495,6 @@ window.addEventListener('load', () => {
     }, 1500); // minimum display time
 });
 </script>
-
-
-
 
       <script src="{% static 'assets/js/chart.js' %}"></script>
       <script src="{% static 'assets/js/main.js' %}"></script>

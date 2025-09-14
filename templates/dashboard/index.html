@@ -15,10 +15,169 @@
   <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
       <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon.png' %}">
-</head>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aquawolf04/font-awesome-pro@5cd1511/css/all.css">
+   
+    <!-- Tailwind CSS with custom color variables -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class', // enable class-based dark mode
+    theme: {
+      extend: {},
+    },
+  }
+</script>
+
+  </head>
 
 
 <style>
+
+  
+.Active {
+  background: linear-gradient(135deg, #064e3b, #10b981); /* dark green → emerald */
+  color: white !important; /* make text readable */
+  font-weight: 600;
+  border-radius: 0.5rem; /* smooth rounded corners */
+  padding: 0.5rem 1rem; /* optional padding */
+  transition: all 0.3s ease-in-out;
+}
+
+.round{
+  border-radius:50%;
+  height:50px;
+ width:50px;
+}
+
+.rond {
+  border-radius: 50%;
+  height: 32px;
+  width: 32px;
+ 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+
+
+
+
+.logo-small {
+  height: 40px;
+}
+
+/* Sidebar Body */
+.sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Menu Items */
+.nav-wrapper .menu-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #E5E7EB;
+  padding-bottom: 4px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 11px 0;
+  color: #1F2937;
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  color: #22C55E;
+}
+
+.menu-icon {
+  margin-right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+
+
+.user-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  object-fit: cover;
+  margin-bottom: 4px;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 4px;
+}
+
+.logout-icon svg {
+  width: 24px;
+  height: 24px;
+  color: #22C55E;
+  transition: 0.2s;
+}
+
+.logout-icon:hover svg {
+  color: #16A34A;
+  transform: scale(1.1);
+}
+
+
+.logo-gradient {
+  display: inline-flex;           
+  align-items: center;
+  justify-content: center;
+  width: 48px;                    
+  height: 48px;
+  border-radius: 12px;            
+  padding: 6px;                    
+
+  /* gradient with transparency */
+  background: linear-gradient(
+    135deg, 
+    rgba(34, 197, 94, 0.3),   /* green with 30% opacity */
+    rgba(22, 163, 74, 0.3)    /* darker green with 30% opacity */
+  );
+}
+
+
+/* Chrome, Edge, Safari */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px; /* thin scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(34, 197, 94, 0.1); /* light transparent green track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(34, 197, 94, 0.8); /* green thumb with some transparency */
+  border-radius: 10px; /* rounded thumb */
+  border: 2px solid transparent; /* spacing around thumb */
+}
+
+/* Firefox support */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 197, 94, 0.8) rgba(34, 197, 94, 0.1);
+}
+
+
+
 
        .logo-small {
         width: 150px !important;
@@ -35,8 +194,125 @@
 </style>
 
 
+    <style>
+.page-loading {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1); /* slower fade */
+    background: radial-gradient(ellipse at center, rgba(16,185,129,0.08) 0%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,1) 100%);
+    backdrop-filter: blur(2px);
+    visibility: hidden;
+    z-index: 9999;
+}
+
+.dark .page-loading {
+    background: radial-gradient(ellipse at center, rgba(16,185,129,0.12) 0%, rgba(17,24,39,0.95) 50%, rgba(17,24,39,1) 100%);
+}
+
+.page-loading.active { opacity: 1; visibility: visible; }
+.page-loading-inner { position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; transition: all 1s cubic-bezier(0.4,0,0.2,1); opacity:0; }
+.page-loading.active>.page-loading-inner { opacity:1; }
+
+.loading-container { display:flex; align-items:center; justify-content:center; flex-direction:column; position:relative; }
+
+/* Particles */
+.loading-particles { position:absolute; width:300px; height:300px; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; }
+.particle { position:absolute; width:4px; height:4px; border-radius:50%; background: linear-gradient(45deg,#10b981,#047857); opacity:0.6; animation: floatParticle 6s ease-in-out infinite; }
+.particle:nth-child(1){top:20%;left:20%;animation-delay:0s;}
+.particle:nth-child(2){top:80%;left:80%;animation-delay:0.7s;}
+.particle:nth-child(3){top:60%;left:20%;animation-delay:1.4s;}
+.particle:nth-child(4){top:30%;left:70%;animation-delay:2.1s;}
+.particle:nth-child(5){top:70%;left:30%;animation-delay:2.8s;}
+.particle:nth-child(6){top:10%;left:60%;animation-delay:3.5s;}
+
+/* Loading animation */
+.loading-animation { display:flex; align-items:center; justify-content:center; width:120px; height:120px; margin-bottom:2rem; position:relative; filter: drop-shadow(0 0 20px rgba(16,185,129,0.2)); }
+
+/* Outer rings */
+.loading-animation .orbit-ring { position:absolute; border-radius:50%; border:2px solid rgba(16,185,129,0.2); animation:rotateOrbit 12s linear infinite; }
+.orbit-ring:nth-child(1){width:100%;height:100%;border-top:2px solid #10b981;border-right:2px solid rgba(16,185,129,0.3);animation-duration:3s;}
+.orbit-ring:nth-child(2){width:80%;height:80%;top:10%;left:10%;border-bottom:2px solid #10b981;border-left:2px solid rgba(16,185,129,0.3);animation-duration:3.8s;animation-direction:reverse;}
+.orbit-ring:nth-child(3){width:60%;height:60%;top:20%;left:20%;border-top:2px solid #10b981;border-right:2px solid rgba(16,185,129,0.3);animation-duration:4.5s;}
+
+/* Inner circles */
+.loading-animation .inner-circle { position:absolute;width:15px;height:15px;border-radius:50%; background:#10b981; box-shadow:0 0 10px rgba(16,185,129,0.6); animation:spinInner 3s cubic-bezier(0.5,0,0.5,1) infinite; }
+.inner-circle:nth-child(4){border-top:3px solid #10b981;border-right:3px solid rgba(16,185,129,0.4); animation-delay:0s;}
+.inner-circle:nth-child(5){border-bottom:3px solid #10b981;border-left:3px solid rgba(16,185,129,0.4); animation-delay:0.5s; animation-direction:reverse;}
+
+/* Core */
+.loading-animation .core { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:20px;height:20px; border-radius:50%; background:linear-gradient(45deg,#10b981,#047857); background-size:200% 200%; box-shadow:0 0 20px rgba(16,185,129,0.6),0 0 40px rgba(16,185,129,0.3), inset 0 0 10px rgba(255,255,255,0.3); animation: coreGlow 3s ease-in-out infinite, morphCore 6s ease-in-out infinite; }
+
+/* Text & subtitle */
+.page-loading .text { font-weight:700;letter-spacing:0.1em;margin-top:1.5rem;font-size:1.1rem;position:relative; background:linear-gradient(90deg,#10b981,#10b981,#047857,#10b981,#10b981); background-size:300% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:textShimmer 6s linear infinite; text-shadow:0 0 30px rgba(16,185,129,0.3);}
+.page-loading .text::before { content:''; position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px; background:linear-gradient(45deg,transparent,rgba(16,185,129,0.1),transparent); border-radius:4px; z-index:-1; animation:textGlow 4s ease-in-out infinite alternate; }
+.page-loading .subtitle { font-size:0.75rem;color:#047857;font-weight:500;margin-top:0.5rem;letter-spacing:0.05em;animation:subtitleFade 4s ease-in-out infinite; }
+
+/* Progress bar */
+.loading-progress { width:200px;height:2px;background:rgba(4,120,87,0.2); border-radius:1px;margin-top:1.5rem; overflow:hidden; position:relative; }
+.loading-progress::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,#10b981,transparent); animation:progressSlide 4s ease-in-out infinite; }
+
+/* Animations */
+@keyframes floatParticle {0%,100%{transform:translateY(0) rotate(0deg);opacity:0.6;}50%{transform:translateY(-20px) rotate(180deg);opacity:1;}}
+@keyframes rotateOrbit {0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+@keyframes spinInner {0%{transform:rotate(0deg) scale(1);}50%{transform:rotate(180deg) scale(1.1);}100%{transform:rotate(360deg) scale(1);}}
+@keyframes coreGlow {0%{transform:translate(-50%,-50%) scale(0.8);box-shadow:0 0 20px rgba(16,185,129,0.6),0 0 40px rgba(16,185,129,0.3), inset 0 0 10px rgba(255,255,255,0.3);}100%{transform:translate(-50%,-50%) scale(1.2);box-shadow:0 0 30px rgba(16,185,129,0.8),0 0 60px rgba(16,185,129,0.4), inset 0 0 15px rgba(255,255,255,0.5);}}
+@keyframes morphCore {0%,100%{border-radius:50%;background-position:0% 50%;}25%{border-radius:40%;background-position:100% 50%;}50%{border-radius:30%;background-position:0% 50%;}75%{border-radius:40%;background-position:100% 50%;}}
+@keyframes textShimmer {0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@keyframes textGlow {0%{opacity:0.3;}100%{opacity:0.7;}}
+@keyframes subtitleFade {0%,100%{opacity:0.5;transform:translateY(0px);}50%{opacity:1;transform:translateY(-2px);}}
+@keyframes progressSlide {0%{left:-100%;}50%{left:0%;}100%{left:100%;}}
+</style>
+
 
 <body>
+
+  
+
+      <!-- Ultra Modern Page Loader -->
+    <div class="page-loading active">
+        <div class="page-loading-inner">
+            <div class="loading-container">
+                <!-- Floating particles background -->
+                <div class="loading-particles">
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                </div>
+                
+                <!-- Main loading animation -->
+                <div class="loading-animation">
+                    <!-- Outer orbital rings -->
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-ring"></div>
+                    <div class="orbit-ring"></div>
+                    
+                    <!-- Inner spinning circles -->
+                    <div class="inner-circle"></div>
+                    <div class="inner-circle"></div>
+                    
+                    <!-- Morphing glowing core -->
+                    <div class="core"></div>
+                </div>
+                
+                <!-- Enhanced text with effects -->
+                <div class="text">Belco Community Credit Union</div>
+                <div class="subtitle">Secure Banking Platform</div>
+                
+                <!-- Progress indicator -->
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+  
   <!-- layout start -->
   <div class="w-full layout-wrapper active">
     <div class="w-full flex relative">
@@ -46,7 +322,7 @@
       <img src="{% static 'images/logo_white.png' %}" alt="Belco Community Credit Union Logo" class="block logo-small dark:hidden" />
       <img src="{% static 'images/logo_white.png' %}" alt="Belco Community Credit Union Logo" class="hidden logo-small dark:block" />
     </a>
-    <button type="button" class="drawer-btn absolute right-0 top-auto" title="Ctrl+b">
+    <button type="button" class="drawer-btn absolute right-0 top-auto lg:hidden" title="Ctrl+b">
       <span>
         <svg width="16" height="40" viewBox="0 0 16 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 10C0 4.47715 4.47715 0 10 0H16V40H10C4.47715 40 0 35.5228 0 30V10Z" fill="#22C55E" />
@@ -57,31 +333,31 @@
   </div>
 
 
-  <div class="sidebar-body pl-[48px] pt-[14px] w-full relative z-30 h-screen overflow-style-none overflow-y-scroll pb-[200px]">
+  <div class="sidebar-body pl-[48px] pt-[14px] w-fu relative z-30 h-screen overflow-y-scroll pb-[200px] custom-scrollbar">
     <div class="nav-wrapper pr-[50px] mb-[36px]">
       <div class="item-wrapper mb-5">
-        <h4 class="text-sm font-medium dark:text-bgray-50 text-bgray-700 border-b dark:border-darkblack-400 border-bgray-200 leading-7">Menu</h4>
+        <h4 class="text-sm text-sm  dark:text-bgray-50 text-bgray-700 border-b dark:border-darkblack-400 border-bgray-200 leading-7">Menu</h4>
         <ul class="mt-2.5">
-          <li class="item py-[11px] text-bgray-900 dark:text-white">
+          <li class="item py-[11px] text-bgray-900 dark:text-gray-900 dark:text-white Active">
             <a href="{% url 'dashboard' %}">
               <div class="flex items-center justify-between">
                 <div class="flex space-x-2.5 items-center">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient ">
                     <svg width="18" height="21" viewBox="0 0 18 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path class="path-1" d="M0 8.84719C0 7.99027 0.366443 7.17426 1.00691 6.60496L6.34255 1.86217C7.85809 0.515019 10.1419 0.515019 11.6575 1.86217L16.9931 6.60496C17.6336 7.17426 18 7.99027 18 8.84719V17C18 19.2091 16.2091 21 14 21H4C1.79086 21 0 19.2091 0 17V8.84719Z" fill="#1A202C" />
                       <path class="path-2" d="M5 17C5 14.7909 6.79086 13 9 13C11.2091 13 13 14.7909 13 17V21H5V17Z" fill="#22C55E" />
                     </svg>
                   </span>
-                  <span class="item-text text-lg font-medium leading-none">Dashboard</span>
+                  <span class="item-text text-lg text-sm  leading-none">Dashboard</span>
                 </div>
               </div>
             </a>
           </li>
-          <li class="item py-[11px] text-bgray-900 dark:text-white">
+          <li class="item py-[11px] text-bgray-900 dark:text-gray-900 dark:text-white">
             <a href="{% url 'transactions' %}">
               <div class="flex items-center justify-between">
                 <div class="flex space-x-2.5 items-center">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M18 16V6C18 3.79086 16.2091 2 14 2H4C1.79086 2 0 3.79086 0 6V16C0 18.2091 1.79086 20 4 20H14C16.2091 20 18 18.2091 18 16Z" fill="#1A202C" class="path-1" />
                       <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 8C4.25 7.58579 4.58579 7.25 5 7.25H13C13.4142 7.25 13.75 7.58579 13.75 8C13.75 8.41421 13.4142 8.75 13 8.75H5C4.58579 8.75 4.25 8.41421 4.25 8Z" fill="#22C55E" class="path-2" />
@@ -90,7 +366,7 @@
                       <path d="M11 0H7C5.89543 0 5 0.895431 5 2C5 3.10457 5.89543 4 7 4H11C12.1046 4 13 3.10457 13 2C13 0.895431 12.1046 0 11 0Z" fill="#22C55E" class="path-2" />
                     </svg>
                   </span>
-                  <span class="item-text text-lg font-medium leading-none">Transactions</span>
+                  <span class="item-text text-lg text-sm  leading-none">Transactions</span>
                 </div>
               </div>
             </a>
@@ -99,65 +375,65 @@
         </ul>
       </div>
       <div class="item-wrapper mb-5">
-        <h4 class="text-sm font-medium text-bgray-700 dark:text-bgray-50 border-b border-bgray-200 dark:border-darkblack-400 leading-7">Transfers</h4>
+        <h4 class="text-sm text-sm  text-bgray-700 dark:text-bgray-50 border-b border-bgray-200 dark:border-darkblack-400 leading-7">Transfers</h4>
         <ul class="mt-2.5">
-          <li class="item py-[11px] text-bgray-900 dark:text-white">
+          <li class="item py-[11px] text-bgray-900 dark:text-gray-900 dark:text-white">
             <a href="{% url 'local_transfer' %}">
               <div class="flex items-center justify-between">
                 <div class="flex space-x-2.5 items-center">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M2 2C2 0.89543 2.89543 0 4 0H16C17.1046 0 18 0.89543 18 2V10C18 11.1046 17.1046 12 16 12H4C2.89543 12 2 11.1046 2 10V2Z" fill="#1A202C" class="path-1" />
                       <path d="M10 3.5L6 7.5H8V10.5H12V7.5H14L10 3.5Z" fill="#22C55E" class="path-2" />
                       <path d="M4 14C4 13.4477 4.44772 13 5 13H15C15.5523 13 16 13.4477 16 14V16C16 16.5523 15.5523 17 15 17H5C4.44772 17 4 16.5523 4 16V14Z" fill="#22C55E" class="path-2" />
                     </svg>
                   </span>
-                  <span class="item-text text-lg font-medium leading-none">Local Transfer</span>
+                  <span class="item-text text-lg text-sm  leading-none">Local Transfer</span>
                 </div>
               </div>
             </a>
           </li>
-          <li class="item py-[11px] text-bgray-900 dark:text-white">
+          <li class="item py-[11px] text-bgray-900 dark:text-gray-900 dark:text-white">
             <a href="{% url 'international_transfer' %}">
               <div class="flex items-center justify-between">
                 <div class="flex space-x-2.5 items-center">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0Z" fill="#1A202C" class="path-1" />
                       <path d="M15 8L12 11L9 8H11V6H13V8H15ZM9 16L12 13L15 16H13V18H11V16H9Z" fill="#22C55E" class="path-2" />
                     </svg>
                   </span>
-                  <span class="item-text text-lg font-medium leading-none">International Transfer</span>
+                  <span class="item-text text-lg text-sm  leading-none">International Transfer</span>
                 </div>
               </div>
             </a>
           </li>
-          <li class="item py-[11px] text-bgray-900 dark:text-white">
+          <li class="item py-[11px] text-bgray-900 dark:text-gray-900 dark:text-white">
             <a href="{% url 'deposit' %}">
               <div class="flex items-center justify-between">
                 <div class="flex space-x-2.5 items-center">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z" fill="#1A202C" class="path-1" />
                       <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
                     </svg>
                   </span>
-                  <span class="item-text text-lg font-medium leading-none">Deposit</span>
+                  <span class="item-text text-lg text-sm  leading-none">Deposit</span>
                 </div>
               </div>
             </a>
           </li>
-          <li class="item py-[11px] text-bgray-900 dark:text-white">
+          <li class="item py-[11px] text-bgray-900 dark:text-gray-900 dark:text-white">
             <a href="{% url 'currency_swap' %}">
               <div class="flex items-center justify-between">
                 <div class="flex space-x-2.5 items-center">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0Z" fill="#1A202C" class="path-1" />
                       <path d="M9 15L7 13L8.414 11.586L9 12.172V9H11V12.172L11.586 11.586L13 13L11 15H9ZM15 11L13 9L14.414 7.586L15 8.172V5H17V8.172L17.586 7.586L19 9L17 11H15Z" fill="#22C55E" class="path-2" />
                     </svg>
                   </span>
-                  <span class="item-text text-lg font-medium leading-none">Currency Swap</span>
+                  <span class="item-text text-lg text-sm  leading-none">Currency Swap</span>
                 </div>
               </div>
             </a>
@@ -165,34 +441,34 @@
         </ul>
       </div>
       <div class="item-wrapper mb-5">
-        <h4 class="text-sm font-medium text-bgray-700 dark:text-bgray-50 border-b border-bgray-200 dark:border-darkblack-400 leading-7">Services</h4>
+        <h4 class="text-sm text-sm  text-bgray-700 dark:text-bgray-50 border-b border-bgray-200 dark:border-darkblack-400 leading-7">Services</h4>
         <ul class="mt-2.5">
-          <li class="item py-[11px] text-bgray-900 dark:text-white">
+          <li class="item py-[11px] text-bgray-900 dark:text-gray-900 dark:text-white">
             <a href="{% url 'loans' %}">
               <div class="flex items-center justify-between">
                 <div class="flex space-x-2.5 items-center">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z" fill="#1A202C" class="path-1" />
                       <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
                     </svg>
                   </span>
-                  <span class="item-text text-lg font-medium leading-none">Loans</span>
+                  <span class="item-text text-lg text-sm  leading-none">Loans</span>
                 </div>
               </div>
             </a>
           </li>
-          <li class="item py-[11px] text-bgray-900 dark:text-white">
+          <li class="item py-[11px] text-bgray-900 dark:text-gray-900 dark:text-white">
             <a href="{% url 'grants' %}">
               <div class="flex items-center justify-between">
                 <div class="flex space-x-2.5 items-center">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M18 11C18 15.9706 13.9706 20 9 20C4.02944 20 0 15.9706 0 11C0 6.02944 4.02944 2 9 2C13.9706 2 18 6.02944 18 11Z" fill="#1A202C" class="path-1" />
                       <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
                     </svg>
                   </span>
-                  <span class="item-text text-lg font-medium leading-none">Grants</span>
+                  <span class="item-text text-lg text-sm  leading-none">Grants</span>
                 </div>
               </div>
             </a>
@@ -200,34 +476,34 @@
         </ul>
       </div>
       <div class="item-wrapper mb-5">
-        <h4 class="text-sm font-medium text-bgray-700 dark:text-bgray-50 border-b border-bgray-200 dark:border-darkblack-400 leading-7">Account</h4>
+        <h4 class="text-sm text-sm  text-bgray-700 dark:text-bgray-50 border-b border-bgray-200 dark:border-darkblack-400 leading-7">Account</h4>
         <ul class="mt-2.5">
-          <li class="item py-[11px] text-bgray-900 dark:text-white">
+          <li class="item py-[11px] text-bgray-900 dark:text-gray-900 dark:text-white">
             <a href="{% url 'profile' %}">
               <div class="flex items-center justify-between">
                 <div class="flex space-x-2.5 items-center">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M8.84849 0H7.15151C6.2143 0 5.45454 0.716345 5.45454 1.6C5.45454 2.61121 4.37259 3.25411 3.48444 2.77064L3.39424 2.72153C2.58258 2.27971 1.54473 2.54191 1.07612 3.30717L0.227636 4.69281C-0.240971 5.45808 0.0371217 6.43663 0.848773 6.87846C1.73734 7.36215 1.73734 8.63785 0.848771 9.12154C0.0371203 9.56337 -0.240972 10.5419 0.227635 11.3072L1.07612 12.6928C1.54473 13.4581 2.58258 13.7203 3.39424 13.2785L3.48444 13.2294C4.37259 12.7459 5.45454 13.3888 5.45454 14.4C5.45454 15.2837 6.2143 16 7.15151 16H8.84849C9.7857 16 10.5455 15.2837 10.5455 14.4C10.5455 13.3888 11.6274 12.7459 12.5156 13.2294L12.6058 13.2785C13.4174 13.7203 14.4553 13.4581 14.9239 12.6928L15.7724 11.3072C16.241 10.5419 15.9629 9.56336 15.1512 9.12153C14.2627 8.63784 14.2627 7.36216 15.1512 6.87847C15.9629 6.43664 16.241 5.45809 15.7724 4.69283L14.9239 3.30719C14.4553 2.54192 13.4174 2.27972 12.6058 2.72154L12.5156 2.77065C11.6274 3.25412 10.5455 2.61122 10.5455 1.6C10.5455 0.716344 9.7857 0 8.84849 0Z" fill="#1A202C" class="path-1" />
                       <path d="M11 8C11 9.65685 9.65685 11 8 11C6.34315 11 5 9.65685 5 8C5 6.34315 6.34315 5 8 5C9.65685 5 11 6.34315 11 8Z" fill="#22C55E" class="path-2" />
                     </svg>
                   </span>
-                  <span class="item-text text-lg font-medium leading-none">Settings</span>
+                  <span class="item-text text-lg text-sm  leading-none">Settings</span>
                 </div>
               </div>
             </a>
           </li>
-          <li class="item py-[11px] text-bgray-900 dark:text-white">
+          <li class="item py-[11px] text-bgray-900 dark:text-gray-900 dark:text-white">
             <a href="mailto:info@belcoccu.com">
               <div class="flex items-center justify-between">
                 <div class="flex space-x-2.5 items-center">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M18 11C18 15.9706 13.9706 20 9 20C4.02944 20 0 15.9706 0 11C0 6.02944 4.02944 2 9 2C13.9706 2 18 6.02944 18 11Z" fill="#1A202C" class="path-1" />
                       <path d="M9 15C9 15.5523 9.44772 16 10 16C10.5523 16 11 15.5523 11 15V12H14C14.5523 12 15 11.5523 15 11C15 10.4477 14.5523 10 14 10H11V7C11 6.44772 10.5523 6 10 6C9.44772 6 9 6.44772 9 7V10H6C5.44772 10 5 10.4477 5 11C5 11.5523 5.44772 12 6 12H9V15Z" fill="#22C55E" class="path-2" />
                     </svg>
                   </span>
-                  <span class="item-text text-lg font-medium leading-none">Support</span>
+                  <span class="item-text text-lg text-sm  leading-none">Support</span>
                 </div>
               </div>
             </a>
@@ -236,18 +512,16 @@
       </div>
     </div>
     
-    <div class="copy-write-text">
-      <p class="text-sm text-[#969BA0]">&copy; 2025 Belco Community Credit Union. All Rights Reserved.</p>
-    </div>
+  
   </div>
 </aside>
 
-<div style="z-index: 25" class="aside-overlay block sm:hidden w-full h-full fixed left-0 top-0 bg-black bg-opacity-30"></div>
+<div style="z-index: 25" class="aside-overlay block hidden  w-full h-full fixed left-0 top-0 bg-black bg-opacity-30"></div>
 
-<aside class="sm:block hidden relative w-[96px] bg-white dark:bg-black">
+<aside class="sm:block hidden  relative w-[96px] bg-white dark:bg-black">
   <div class="w-full sidebar-wrapper-collapse relative top-0 z-30">
     <div class="sidebar-header bg-white dark:bg-darkblack-600 dark:border-darkblack-500 sticky top-0 border-r border-b border-r-[#F7F7F7] border-b-[#F7F7F7] w-full h-[108px] flex items-center justify-center z-20">
-      <a href="index.html">
+      <a href="{% url 'home' %}">
         <img src="{% static 'images/logo_white.png' %}" alt="Belco Community Credit Union Logo" class="dark:hidden block" />
         <img src="{% static 'images/logo_white.png' %}" alt="Belco Community Credit Union Logo" class="hidden dark:block" />
       </a>
@@ -259,7 +533,7 @@
             <ul class="mt-2.5 flex justify-center items-center flex-col">
               <li class="item py-[11px] px-[43px]">
                 <a href="{% url 'dashboard' %}">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="18" height="21" viewBox="0 0 18 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path class="path-1" d="M0 8.84719C0 7.99027 0.366443 7.17426 1.00691 6.60496L6.34255 1.86217C7.85809 0.515019 10.1419 0.515019 11.6575 1.86217L16.9931 6.60496C17.6336 7.17426 18 7.99027 18 8.84719V17C18 19.2091 16.2091 21 14 21H4C1.79086 21 0 19.2091 0 17V8.84719Z" fill="#1A202C" />
                       <path class U="path-2" d="M5 17C5 14.7909 6.79086 13 9 13C11.2091 13 13 14.7909 13 17V21H5V17Z" fill="#22C55E" />
@@ -269,7 +543,7 @@
               </li>
               <li class="item py-[11px] px-[43px]">
                 <a href="{% url 'transactions' %}">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M18 16V6C18 3.79086 16.2091 2 14 2H4C1.79086 2 0 3.79086 0 6V16C0 18.2091 1.79086 20 4 20H14C16.2091 20 18 18.2091 18 16Z" fill="#1A202C" class="path-1" />
                       <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 8C4.25 7.58579 4.58579 7.25 5 7.25H13C13.4142 7.25 13.75 7.58579 13.75 8C13.75 8.41421 13.4142 8.75 13 8.75H5C4.58579 8.75 4.25 8.41421 4.25 8Z" fill="#22C55E" class="path-2" />
@@ -282,7 +556,7 @@
               </li>
               <li class="item py-[11px] px-[43px]">
                 <a href="{% url 'local_transfer' %}">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M2 2C2 0.89543 2.89543 0 4 0H16C17.1046 0 18 0.89543 18 2V10C18 11.1046 17.1046 12 16 12H4C2.89543 12 2 11.1046 2 10V2Z" fill="#1A202C" class="path-1" />
                       <path d="M10 3.5L6 7.5H8V10.5H12V7.5H14L10 3.5Z" fill="#22C55E" class="path-2" />
@@ -293,7 +567,7 @@
               </li>
               <li class="item py-[11px] px-[43px]">
                 <a href="{% url 'international_transfer' %}">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0Z" fill="#1A202C" class="path-1" />
                       <path d="M15 8L12 11L9 8H11V6H13V8H15ZM9 16L12 13L15 16H13V18H11V16H9Z" fill="#22C55E" class="path-2" />
@@ -303,7 +577,7 @@
               </li>
               <li class="item py-[11px] px-[43px]">
                 <a href="{% url 'deposit' %}">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z" fill="#1A202C" class="path-1" />
                       <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
@@ -313,7 +587,7 @@
               </li>
               <li class="item py-[11px] px-[43px]">
                 <a href="{% url 'currency_swap' %}">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0Z" fill="#1A202C" class="path-1" />
                       <path d="M9 15L7 13L8.414 11.586L9 12.172V9H11V12.172L11.586 11.586L13 13L11 15H9ZM15 11L13 9L14.414 7.586L15 8.172V5H17V8.172L17.586 7.586L19 9L17 11H15Z" fill="#22C55E" class="path-2" />
@@ -323,7 +597,7 @@
               </li>
               <li class="item py-[11px] px-[43px]">
                 <a href="{% url 'loans' %}">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z" fill="#1A202C" class="path-1" />
                       <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
@@ -333,7 +607,7 @@
               </li>
               <li class="item py-[11px] px-[43px]">
                 <a href="{% url 'grants' %}">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M18 11C18 15.9706 13.9706 20 9 20C4.02944 20 0 15.9706 0 11C0 6.02944 4.02944 2 9 2C13.9706 2 18 6.02944 18 11Z" fill="#1A202C" class="path-1" />
                       <path d="M10 3L6 7H8V10H12V7H14L10 3Z" fill="#22C55E" class="path-2" />
@@ -343,7 +617,7 @@
               </li>
               <li class="item py-[11px] px-[43px]">
                 <a href="{% url 'profile' %}">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M8.84849 0H7.15151C6.2143 0 5.45454 0.716345 5.45454 1.6C5.45454 2.61121 4.37259 3.25411 3.48444 2.77064L3.39424 2.72153C2.58258 2.27971 1.54473 2.54191 1.07612 3.30717L0.227636 4.69281C-0.240971 5.45808 0.0371217 6.43663 0.848773 6.87846C1.73734 7.36215 1.73734 8.63785 0.848771 9.12154C0.0371203 9.56337 -0.240972 10.5419 0.227635 11.3072L1.07612 12.6928C1.54473 13.4581 2.58258 13.7203 3.39424 13.2785L3.48444 13.2294C4.37259 12.7459 5.45454 13.3888 5.45454 14.4C5.45454 15.2837 6.2143 16 7.15151 16H8.84849C9.7857 16 10.5455 15.2837 10.5455 14.4C10.5455 13.3888 11.6274 12.7459 12.5156 13.2294L12.6058 13.2785C13.4174 13.7203 14.4553 13.4581 14.9239 12.6928L15.7724 11.3072C16.241 10.5419 15.9629 9.56336 15.1512 9.12153C14.2627 8.63784 14.2627 7.36216 15.1512 6.87847C15.9629 6.43664 16.241 5.45809 15.7724 4.69283L14.9239 3.30719C14.4553 2.54192 13.4174 2.27972 12.6058 2.72154L12.5156 2.77065C11.6274 3.25412 10.5455 2.61122 10.5455 1.6C10.5455 0.716344 9.7857 0 8.84849 0Z" fill="#1A202C" class="path-1" />
                       <path d="M11 8C11 9.65685 9.65685 11 8 11C6.34315 11 5 9.65685 5 8C5 6.34315 6.34315 5 8 5C9.65685 5 11 6.34315 11 8Z" fill="#22C55E" class="path-2" />
@@ -353,22 +627,30 @@
               </li>
               <li class="item py-[11px] px-[43px]">
                 <a href="mailto:info@belcoccu.com">
-                  <span class="item-ico">
+                  <span class="item-ico logo-gradient">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M18 11C18Попробуйте 15.9706 13.9706 20 9 20C4.02944 20 0 15.9706 0 11C0 6.02944 4.02944 2 9 2C13.9706 2 18 6.02944 18 11Z" fill="#1A202C" class="path-1" />
-                      <path d="M9 15C9 15.5523 9.44772 16 10 16C10.5523 16 11 15.5523 11 15V12H14C14.5523 12 15 11.5523 15 11C15 10.4477 14.5523 10 14 10H11V7C11 6.44772 10.5523 6 10 6C9.44772 6 9 6.44772 9 7V10H6C5.44772 10 5 10.4477 5 11C5 11.5523 5.44772 12 6 12H9V15Z" fill="#22C55E" class="path-2" />
+                     <path d="M9 15C9 15.5523 9.44772 16 10 16C10.5523 16 11 15.5523 11 15V12H14C14.5523 12 15 11.5523 15 11C15 10.4477 14.5523 10 14 10H11V7C11 6.44772 10.5523 6 10 6C9.44772 6 9 6.44772 9 7V10H6C5.44772 10 5 10.4477 5 11C5 11.5523 5.44772 12 6 12H9V15Z" fill="#22C55E" class="path-2" />
                     </svg>
                   </span>
                 </a>
               </li>
             </ul>
+
+
+            
+            
           </div>
         </div>
+
        
       </div>
     </div>
   </div>
+
+  
 </aside>
+
+
 
 
 
@@ -390,6 +672,7 @@
               <h3 class="lg:text-3xl text-xl dark:text-bgray-50 text-bgray-900 font-bold lg:leading-[36.4px]">
                 Dashboard
               </h3>
+              <p class="text-gray-900 dark:text-white">Welcome back,  {{ request.user.username }}</p>
             
             </div>
            
@@ -423,7 +706,7 @@
                   <button onclick="notificationAction()" id="notification-btn" type="button"
                     class="w-[52px] h-[52px] rounded-[12px] border border-success-300 dark:border-darkblack-400 flex justify-center items-center relative">
                     <span
-                      class="w-3.5 h-3.5 rounded-full bg-bgray-300 dark:bg-bgray-600 dark:border-none border-2 border-white absolute -right-[5px] -top-[2px]">
+                      class="w-3.5 h-3.5 round bg-bgray-300 dark:bg-bgray-600 dark:border-none border-2 border-white absolute -right-[5px] -top-[2px]">
                     </span>
                     <svg class="fill-bgray-900 dark:fill-white" width="24" height="25" viewBox="0 0 24 25" fill="none"
                       xmlns="http://www.w3.org/2000/svg">
@@ -447,8 +730,8 @@
 
                   <div class="2xl:block hidden">
                     <div class="flex space-x-2.5 items-center">
-                      <h3 class="text-base dark:text-white text-bgray-900 font-bold leading-[28px]">
-                        John Doe
+                      <h3 class="text-base dark:text-gray-900 dark:text-white text-bgray-900 font-bold leading-[28px]">
+                        {{ request.user.username }}
                       </h3>
                       <span>
                         <svg class="stroke-bgray-900 dark:stroke-white" width="24" height="24" viewBox="0 0 24 24"
@@ -457,9 +740,7 @@
                         </svg>
                       </span>
                     </div>
-                    <p class="text-sm font-medium leading-[20px] dark:text-bgray-50 text-bgray-600">
-                      Super Admin
-                    </p>
+                  
                   </div>
                 </div>
               </div>
@@ -472,21 +753,7 @@
                     "
                   class="w-[400px] bg-white dark:bg-darkblack-600 absolute -left-[347px] top-[81px] rounded-lg hidden">
                   <div class="w-full pt-[66px] pb-[75px] relative">
-                    <div class="w-full h-[66px] flex justify-between items-center absolute left-0 top-0 px-8">
-                      <h3 class="text-xl text-bgray-900 dark:text-white font-bold">
-                        Notifications
-                      </h3>
-                      <span>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            d="M10.325 4.317C10.751 2.561 13.249 2.561 13.675 4.317C13.7389 4.5808 13.8642 4.82578 14.0407 5.032C14.2172 5.23822 14.4399 5.39985 14.6907 5.50375C14.9414 5.60764 15.2132 5.65085 15.4838 5.62987C15.7544 5.60889 16.0162 5.5243 16.248 5.383C17.791 4.443 19.558 6.209 18.618 7.753C18.4769 7.98466 18.3924 8.24634 18.3715 8.51677C18.3506 8.78721 18.3938 9.05877 18.4975 9.30938C18.6013 9.55999 18.7627 9.78258 18.9687 9.95905C19.1747 10.1355 19.4194 10.2609 19.683 10.325C21.439 10.751 21.439 13.249 19.683 13.675C19.4192 13.7389 19.1742 13.8642 18.968 14.0407C18.7618 14.2172 18.6001 14.4399 18.4963 14.6907C18.3924 14.9414 18.3491 15.2132 18.3701 15.4838C18.3911 15.7544 18.4757 16.0162 18.617 16.248C19.557 17.791 17.791 19.558 16.247 18.618C16.0153 18.4769 15.7537 18.3924 15.4832 18.3715C15.2128 18.3506 14.9412 18.3938 14.6906 18.4975C14.44 18.6013 14.2174 18.7627 14.0409 18.9687C13.8645 19.1747 13.7391 19.4194 13.675 19.683C13.249 21.439 10.751 21.439 10.325 19.683C10.2611 19.4192 10.1358 19.1742 9.95929 18.968C9.7828 18.7618 9.56011 18.6001 9.30935 18.4963C9.05859 18.3924 8.78683 18.3491 8.51621 18.3701C8.24559 18.3911 7.98375 18.4757 7.752 18.617C6.209 19.557 4.442 17.791 5.382 16.247C5.5231 16.0153 5.60755 15.7537 5.62848 15.4832C5.64942 15.2128 5.60624 14.9412 5.50247 14.6906C5.3987 14.44 5.23726 14.2174 5.03127 14.0409C4.82529 13.8645 4.58056 13.7391 4.317 13.675C2.561 13.249 2.561 10.751 4.317 10.325C4.5808 10.2611 4.82578 10.1358 5.032 9.95929C5.23822 9.7828 5.39985 9.56011 5.50375 9.30935C5.60764 9.05859 5.65085 8.78683 5.62987 8.51621C5.60889 8.24559 5.5243 7.98375 5.383 7.752C4.443 6.209 6.209 4.442 7.753 5.382C8.753 5.99 10.049 5.452 10.325 4.317Z"
-                            stroke="#A0AEC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                          <path
-                            d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
-                            stroke="#A0AEC0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                      </span>
-                    </div>
+                   
                     
                     <div class="w-full h-[75px] flex justify-between items-center absolute left-0 bottom-0 px-8">
                       <div>
@@ -535,7 +802,7 @@
                                 </span>
                               </div>
                               <div class="flex-1">
-                                <span class="text-sm font-semibold text-bgray-900 dark:text-white">My Profile</span>
+                                <span class="text-sm font-semibold text-bgray-900 dark:text-gray-900 dark:text-white">My Profile</span>
                               </div>
                             </div>
                           </a>
@@ -589,12 +856,17 @@
                   </svg>
                 </span>
               </button>
-              <div class="flex items-center justify-center">
-                <a href="/">
-                  <img src="{% static 'images/logo_white.png' %}" class="block dark:hidden logo-small" alt="logo" />
-                  <img src="{% static 'images/logo_white.png' %}" class="hidden dark:block logo-small " alt="logo" />
-                </a>
-              </div>
+     <div class="flex items-center justify-center">
+  <div>
+    <h5 class="text-sm sm:text-base md:text-lg lg:text-3xl dark:text-bgray-50 text-bgray-900 font-bold lg:leading-[36.4px]">
+      Dashboard
+    </h5>
+    <p class="text-xs sm:text-sm md:text-base text-gray-900 dark:text-white">
+      Welcome back, {{ request.user.username }}
+    </p>
+  </div>
+</div>
+
             </div>
             <div class="mr-2">
               <div onclick="profileAction()" class="flex lg:space-x-3 space-x-0 cursor-pointer">
@@ -608,7 +880,7 @@
                 <div class="2xl:block hidden">
                   <div class="flex space-x-2.5 items-center">
                     <h3 class="text-base text-bgray-900 font-bold leading-[28px]">
-                      John Doe
+                    {{ request.user.username }}
                     </h3>
                     <span>
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -617,9 +889,7 @@
                       </svg>
                     </span>
                   </div>
-                  <p class="text-sm font-medium leading-[20px] text-bgray-600">
-                    Super Admin
-                  </p>
+               
                 </div>
               </div>
 
@@ -696,461 +966,549 @@
             </div>
           </div>
         </header>
-        <main class="w-full xl:px-12 px-6 pb-6 xl:pb-12 sm:pt-[156px] pt-[100px]">
+<main class="w-full xl:px-12 px-6 pb-6 xl:pb-12 sm:pt-[156px] pt-[100px] 
+             bg-gradient-to-br from-green-100/30 to-green-200/30 
+             dark:from-green-900/30 dark:to-green-800/30
+             backdrop-blur-lg">
+
           
-          <!-- write your code here-->
-          <div class="2xl:flex 2xl:space-x-[48px]">
-            <section class="2xl:flex-1 2xl:mb-0 mb-6">
-             
-             
-               <!-- total widget -->
-<div class="w-full mb-6">
-  <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
-    <!-- Checking Balance -->
-    <div class="p-5 rounded-lg bg-white dark:bg-darkblack-600 shadow-md">
-      <div class="flex justify-between items-center mb-5">
-        <div class="flex space-x-2 items-center">
-          <div class="icon">
-            <span>
-              <img src="{% static 'assets/images/icons/total-earn.svg' %}" alt="icon" />
-            </span>
-          </div>
-          <span class="text-lg text-bgray-900 dark:text-white font-semibold">Checking Balance</span>
-        </div>
-        <button class="toggle-balance" data-target="checking-balance">
-          <svg class="eye-open" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 4.167c-4.583 0-8.333 2.917-8.333 5.833s3.75 5.833 8.333 5.833 8.333-2.917 8.333-5.833S14.583 4.167 10 4.167zm0 9.167c-2.292 0-4.167-1.875-4.167-4.167S7.708 5 10 5s4.167 1.875 4.167 4.167S12.292 13.334 10 13.334zm0-6.667a2.5 2.5 0 0 0-2.5 2.5c0 1.375 1.125 2.5 2.5 2.5s2.5-1.125 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5z" fill="#6B7280"/>
-          </svg>
-          <svg class="eye-closed hidden" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2.5 2.5l15 15M10 4.167c-4.583 0-8.333 2.917-8.333 5.833 0 1.458.583 2.833 1.667 3.917m12.5-9.75c0 1.458-.583 2.833-1.667 3.917m-10.833 0c.833 1.083 2.083 1.833 3.75 1.833s2.917-.75 3.75-1.833" stroke="#6B7280" stroke-width="1.5"/>
-          </svg>
-        </button>
-      </div>
-      <div class="flex justify-between items-end">
-        <div class="flex-1">
-          <p id="checking-balance" class="text-bgray-900 dark:text-white font-bold text-3xl leading-[48px]">
-            ${{ account_balance.checking_balance|intcomma }}
-          </p>
-          <div class="flex items-center space-x-1">
-            <span>
-              <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13.4318 0.522827L12.4446 0.522827L8.55575 0.522827L7.56859 0.522827C6.28227 0.522827 5.48082 1.91818 6.12896 3.02928L9.06056 8.05489C9.7037 9.1574 11.2967 9.1574 11.9398 8.05489L14.8714 3.02928C15.5196 1.91818 14.7181 0.522828 13.4318 0.522827Z" fill="#22C55E" />
-                <path opacity="0.4" d="M2.16878 13.0485L3.15594 13.0485L7.04483 13.0485L8.03199 13.0485C9.31831 13.0485 10.1198 11.6531 9.47163 10.542L6.54002 5.5164C5.89689 4.41389 4.30389 4.41389 3.66076 5.5164L0.729153 10.542C0.0810147 11.6531 0.882466 13.0485 2.16878 13.0485Z" fill="#22C55E" />
-              </svg>
-            </span>
-            <span class="text-bgray-700 dark:text-bgray-50 text-sm font-medium">Credit</span>
-            <span class="text-success-300 text-sm font-medium">0</span>
-            <span class="text-bgray-700 dark:text-bgray-50 text-sm font-medium">Debit</span>
-            <span class="text-success-300 text-sm font-medium">0</span>
-          </div>
-        </div>
-        <div class="w-[106px]">
-          <canvas id="totalEarn" height="68"></canvas>
-        </div>
-      </div>
-    </div>
-    <!-- Savings Balance -->
-    <div class="p-5 rounded-lg bg-white dark:bg-darkblack-600 shadow-md">
-      <div class="flex justify-between items-center mb-5">
-        <div class="flex space-x-2 items-center">
-          <div class="icon">
-            <span>
-              <img src="{% static 'assets/images/icons/total-earn.svg' %}" alt="icon" />
-            </span>
-          </div>
-          <span class="text-lg text-bgray-900 dark:text-white font-semibold">Savings Balance</span>
-        </div>
-        <button class="toggle-balance" data-target="savings-balance">
-          <svg class="eye-open" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 4.167c-4.583 0-8.333 2.917-8.333 5.833s3.75 5.833 8.333 5.833 8.333-2.917 8.333-5.833S14.583 4.167 10 4.167zm0 9.167c-2.292 0-4.167-1.875-4.167-4.167S7.708 5 10 5s4.167 1.875 4.167 4.167S12.292 13.334 10 13.334zm0-6.667a2.5 2.5 0 0 0-2.5 2.5c0 1.375 1.125 2.5 2.5 2.5s2.5-1.125 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5z" fill="#6B7280"/>
-          </svg>
-          <svg class="eye-closed hidden" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2.5 2.5l15 15M10 4.167c-4.583 0-8.333 2.917-8.333 5.833 0 1.458.583 2.833 1.667 3.917m12.5-9.75c0 1.458-.583 2.833-1.667 3.917m-10.833 0c.833 1.083 2.083 1.833 3.75 1.833s2.917-.75 3.75-1.833" stroke="#6B7280" stroke-width="1.5"/>
-          </svg>
-        </button>
-      </div>
-      <div class="flex justify-between items-end">
-        <div class="flex-1">
-          <p id="savings-balance" class="text-bgray-900 dark:text-white font-bold text-3xl leading-[48px]">
-            ${{ account_balance.savings_balance|intcomma}}
-          </p>
-          <div class="flex items-center space-x-1">
-            <span>
-              <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13.4318 0.522827L12.4446 0.522827L8.55575 0.522827L7.56859 0.522827C6.28227 0.522827 5.48082 1.91818 6.12896 3.02928L9.06056 8.05489C9.7037 9.1574 11.2967 9.1574 11.9398 8.05489L14.8714 3.02928C15.5196 1.91818 14.7181 0.522828 13.4318 0.522827Z" fill="#22C55E" />
-                <path opacity="0.4" d="M2.16878 13.0485L3.15594 13.0485L7.04483 13.0485L8.03199 13.0485C9.31831 13.0485 10.1198 11.6531 9.47163 10.542L6.54002 5.5164C5.89689 4.41389 4.30389 4.41389 3.66076 5.5164L0.729153 10.542C0.0810147 11.6531 0.882466 13.0485 2.16878 13.0485Z" fill="#22C55E" />
-              </svg>
-            </span>
-            <span class="text-bgray-700 dark:text-bgray-50 text-sm font-medium">Credit</span>
-            <span class="text-success-300 text-sm font-medium">0</span>
-            <span class="text-bgray-700 dark:text-bgray-50 text-sm font-medium">Debit</span>
-            <span class="text-success-300 text-sm font-medium">0</span>
-          </div>
-        </div>
-        <div class="w-[106px]">
-          <canvas id="totalSpending" height="68"></canvas>
-        </div>
-      </div>
-    </div>
-    <!-- Credit Balance -->
-    <div class="p-5 rounded-lg bg-white dark:bg-darkblack-600 shadow-md">
-      <div class="flex justify-between items-center mb-5">
-        <div class="flex space-x-2 items-center">
-          <div class="icon">
-            <span>
-              <img src="{% static 'assets/images/icons/total-earn.svg' %}" alt="icon" />
-            </span>
-          </div>
-          <span class="text-lg text-bgray-900 dark:text-white font-semibold">Credit Balance</span>
-        </div>
-        <button class="toggle-balance" data-target="credit-balance">
-          <svg class="eye-open" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 4.167c-4.583 0-8.333 2.917-8.333 5.833s3.75 5.833 8.333 5.833 8.333-2.917 8.333-5.833S14.583 4.167 10 4.167zm0 9.167c-2.292 0-4.167-1.875-4.167-4.167S7.708 5 10 5s4.167 1.875 4.167 4.167S12.292 13.334 10 13.334zm0-6.667a2.5 2.5 0 0 0-2.5 2.5c0 1.375 1.125 2.5 2.5 2.5s2.5-1.125 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5z" fill="#6B7280"/>
-          </svg>
-          <svg class="eye-closed hidden" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2.5 2.5l15 15M10 4.167c-4.583 0-8.333 2.917-8.333 5.833 0 1.458.583 2.833 1.667 3.917m12.5-9.75c0 1.458-.583 2.833-1.667 3.917m-10.833 0c.833 1.083 2.083 1.833 3.75 1.833s2.917-.75 3.75-1.833" stroke="#6B7280" stroke-width="1.5"/>
-          </svg>
-        </button>
-      </div>
-      <div class="flex justify-between items-end">
-        <div class="flex-1">
-          <p id="credit-balance" class="text-bgray-900 dark:text-white font-bold text-3xl leading-[48px]">
-            ${{ account_balance.credit_balance|intcomma}}
-          </p>
-          <div class="flex items-center space-x-1">
-            <span>
-              <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13.4318 0.522827L12.4446 0.522827L8.55575 0.522827L7.56859 0.522827C6.28227 0.522827 5.48082 1.91818 6.12896 3.02928L9.06056 8.05489C9.7037 9.1574 11.2967 9.1574 11.9398 8.05489L14.8714 3.02928C15.5196 1.91818 14.7181 0.522828 13.4318 0.522827Z" fill="#22C55E" />
-                <path opacity="0.4" d="M2.16878 13.0485L3.15594 13.0485L7.04483 13.0485L8.03199 13.0485C9.31831 13.0485 10.1198 11.6531 9.47163 10.542L6.54002 5.5164C5.89689 4.41389 4.30389 4.41389 3.66076 5.5164L0.729153 10.542C0.0810147 11.6531 0.882466 13.0485 2.16878 13.0485Z" fill="#22C55E" />
-              </svg>
-            </span>
-            <span class="text-bgray-700 dark:text-bgray-50 text-sm font-medium">Credit</span>
-            <span class="text-success-300 text-sm font-medium">0</span>
-            <span class="text-bgray-700 dark:text-bgray-50 text-sm font-medium">Debit</span>
-            <span class="text-success-300 text-sm font-medium">0</span>
-          </div>
-        </div>
-        <div class="w-[106px]">
-          <canvas id="totalGoal" height="68"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- Quick Actions Section -->
-<div class="w-full mb-6">
-  <div class="flex justify-center">
-    <div class="grid grid-cols-2 gap-4 text-center max-w-md">
-      <!-- Deposit -->
-      <a href="{% url 'deposit' %}" class="p-4 rounded-lg bg-white dark:bg-darkblack-600 shadow hover:shadow-md transition duration-300 group">
-        <div class="flex flex-col items-center">
-          <div class="icon mb-2">
-            <svg width="20" height="20" fill="none" stroke="#3B82F6" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M12 3V17M12 17L6 12M12 17L18 12" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M3 21H21" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <span class="text-sm font-semibold text-bgray-900 dark:text-white">Deposit</span>
-        </div>
-      </a>
-
-      <!-- Crypto Transaction -->
-      <a href="{% url 'local_transfer' %}" class="p-4 rounded-lg bg-white dark:bg-darkblack-600 shadow hover:shadow-md transition duration-300 group">
-        <div class="flex flex-col items-center">
-          <div class="icon mb-2">
-            <svg width="20" height="20" fill="none" stroke="#3B82F6" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 6v12M9 9h6M9 15h6" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <span class="text-sm font-semibold text-bgray-900 dark:text-white">Crypto Transaction</span>
-        </div>
-      </a>
-    </div>
-  </div>
-</div>
-
-
-              <!-- revenue, flow -->
-              <div class="w-full mb-[24px] xl:flex xl:space-x-[24px]">
-               
-{% for card in cards %}
-<div class="xl:w-66 w-full text-white rounded-xl p-5 shadow-lg relative overflow-hidden"
-     style="background: linear-gradient(135deg, #0b0c0bff, #10351dff);">
-    
-    <!-- Vendor & Type -->
-    <div class="flex justify-between items-center">
-        <img 
-          src="{% static 'images/' %}{% if card.vendor == 'visa' %}visa.png
-               {% elif card.vendor == 'mastercard' %}mastercard.png
-               {% elif card.vendor == 'amex' %}amex.png
-               {% elif card.vendor == 'discover' %}discover.png
-               {% else %}default.svg{% endif %}" 
-          alt="{{ card.vendor }}" 
-          class="w-10 h-auto"
-        >
-        <span class="uppercase text-sm tracking-wider font-semibold">
-            {{ card.card_type|capfirst }} Card
-        </span>
-    </div>
-
-    <!-- Chip -->
-    <div class="mt-6">
-        <img src="{% static 'images/chip.png' %}" alt="Card Chip" class="w-10 h-auto">
-    </div>
-
-    <!-- Card Number -->
-    <div class="mt-4 text-lg tracking-widest font-mono">
-        **** **** **** {{ card.account|slice:"-4:" }}
-    </div>
-
-    <!-- Cardholder & Expiry -->
-    <div class="mt-6 flex justify-between items-center">
-        <div>
-            <div class="text-xs opacity-75">Card Holder</div>
-            <div class="font-semibold">{{ card.user.get_full_name }}</div>
-        </div>
-        <div>
-            <div class="text-xs opacity-75">Expires</div>
-            <div class="font-semibold">{{ card.expiry_date|date:"m/y" }}</div>
-        </div>
-    </div>
-
-    <!-- Decorative Circles -->
-    <div class="absolute -top-10 -right-10 w-40 h-40 bg-black opacity-10 rounded-full"></div>
-    <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-black opacity-10 rounded-full"></div>
-</div>
-{% empty %}
-<p class="text-gray-500">No cards available.</p>
-{% endfor %}
-
-
-
-                <div class="flex-1 xl:block hidden">
-                  <div class="bg-white dark:bg-darkblack-600 rounded-lg">
-                    <div
-                      class="flex px-[20px] py-[12px] justify-between items-center border-b border-bgray-300 dark:border-darkblack-400">
-                      <h3 class="text-bgray-900 dark:text-white text-xl font-bold">
-                        Efficiency
-                      </h3>
-                      <div class="date-filter relative">
-                        <button onclick="dateFilterAction('#month-filter')" type="button"
-                          class="flex space-x-1 items-center">
-                          <span class="text-base font-semibold text-bgray-900 dark:text-white">Monthly</span>
-                          <span>
-                            <svg class="stroke-bgray-900 dark:stroke-bgray-50" width="16" height="17"
-                              viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M4 6.5L8 10.5L12 6.5" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            </svg>
-                          </span>
-                        </button>
-                        <div id="month-filter"
-                          class="rounded-lg shadow-lg bg-white dark:bg-darkblack-500 absolute right-0 z-10 top-5 overflow-hidden hidden">
-                          <ul>
-                            <li onclick="dateFilterAction('#month-filter')"
-                              class="text-sm  text-bgray-90 cursor-pointer px-5 py-2 hover:bg-bgray-100 font-semibold dark:text-white hover:dark:bg-darkblack-600">
-                              January
-                            </li>
-                            <li onclick="dateFilterAction('#month-filter')"
-                              class="text-sm text-bgray-900 cursor-pointer px-5 py-2 hover:bg-bgray-100 font-semibold dark:text-white hover:dark:bg-darkblack-600">
-                              February
-                            </li>
-
-                            <li onclick="dateFilterAction('#month-filter')"
-                              class="text-sm  text-bgray-900 cursor-pointer px-5 py-2 hover:bg-bgray-100 font-semibold dark:text-white hover:dark:bg-darkblack-600">
-                              March
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="px-[20px] py-[12px]">
-                      <div class="flex space-x-8 items-center mb-4">
-                        <div class="w-[180px] relative">
-                          <canvas id="pie_chart" height="168"></canvas>
-                          <div class="w-[34px] h-[34px] bg-[#EDF2F7] absolute z-0 rounded-full" style="
-                                left: calc(50% - 17px);
-                                top: calc(50% - 17px);
-                              "></div>
-                        </div>
-                        <div class="counting">
-                          <div class="mb-6">
-                            <div class="flex items-center space-x-[2px]">
-                              <p class="text-success-300 text-lg font-bold">
-                                $5,230
-                              </p>
-                              <span><svg width="14" height="12" viewBox="0 0 14 12" fill="none"
-                                  xmlns="http://www.w3.org/2000/svg">
-                                  <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M10.7749 0.558058C10.5309 0.313981 10.1351 0.313981 9.89107 0.558058L7.39107 3.05806C7.14699 3.30214 7.14699 3.69786 7.39107 3.94194C7.63514 4.18602 8.03087 4.18602 8.27495 3.94194L9.70801 2.50888V11C9.70801 11.3452 9.98783 11.625 10.333 11.625C10.6782 11.625 10.958 11.3452 10.958 11V2.50888L12.3911 3.94194C12.6351 4.18602 13.0309 4.18602 13.2749 3.94194C13.519 3.69786 13.519 3.30214 13.2749 3.05806L10.7749 0.558058Z"
-                                    fill="#22C55E" />
-                                  <path opacity="0.4" fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M3.22407 11.4419C3.46815 11.686 3.86388 11.686 4.10796 11.4419L6.60796 8.94194C6.85203 8.69786 6.85203 8.30214 6.60796 8.05806C6.36388 7.81398 5.96815 7.81398 5.72407 8.05806L4.29102 9.49112L4.29101 1C4.29101 0.654823 4.01119 0.375001 3.66602 0.375001C3.32084 0.375001 3.04102 0.654823 3.04102 1L3.04102 9.49112L1.60796 8.05806C1.36388 7.81398 0.968151 7.81398 0.724074 8.05806C0.479996 8.30214 0.479996 8.69786 0.724074 8.94194L3.22407 11.4419Z"
-                                    fill="#22C55E" />
-                                </svg>
-                              </span>
-                            </div>
-                            <p class="text-bgray-600 text-base font-medium">
-                              Arrival
-                            </p>
-                          </div>
-                          <div>
-                            <div class="flex items-center space-x-[2px]">
-                              <p class="text-bgray-900 dark:text-white text-lg font-bold">
-                                $6,230
-                              </p>
-                              <span>
-                                <svg class="fill-bgray-900 dark:fill-bgray-50" width="14" height="12"
-                                  viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M10.7749 0.558058C10.5309 0.313981 10.1351 0.313981 9.89107 0.558058L7.39107 3.05806C7.14699 3.30214 7.14699 3.69786 7.39107 3.94194C7.63514 4.18602 8.03087 4.18602 8.27495 3.94194L9.70801 2.50888V11C9.70801 11.3452 9.98783 11.625 10.333 11.625C10.6782 11.625 10.958 11.3452 10.958 11V2.50888L12.3911 3.94194C12.6351 4.18602 13.0309 4.18602 13.2749 3.94194C13.519 3.69786 13.519 3.30214 13.2749 3.05806L10.7749 0.558058Z" />
-                                  <path opacity="0.4" fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M3.22407 11.4419C3.46815 11.686 3.86388 11.686 4.10796 11.4419L6.60796 8.94194C6.85203 8.69786 6.85203 8.30214 6.60796 8.05806C6.36388 7.81398 5.96815 7.81398 5.72407 8.05806L4.29102 9.49112L4.29101 1C4.29101 0.654823 4.01119 0.375001 3.66602 0.375001C3.32084 0.375001 3.04102 0.654823 3.04102 1L3.04102 9.49112L1.60796 8.05806C1.36388 7.81398 0.968151 7.81398 0.724074 8.05806C0.479996 8.30214 0.479996 8.69786 0.724074 8.94194L3.22407 11.4419Z" />
-                                </svg>
-                              </span>
-                            </div>
-                            <p class="text-bgray-600 dark:text-bgray-50 text-base font-medium">
-                              Spending
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="status">
-                        <div class="flex justify-between items-center mb-1.5">
-                          <div class="flex space-x-3 items-center">
-                            <div class="w-2.5 h-2.5 rounded-full bg-success-300"></div>
-                            <span class="text-sm text-bgray-600 dark:text-bgray-50 font-medium">Goal</span>
-                          </div>
-                          <p class="text-bgray-900 font-bold text-sm dark:text-bgray-50">13%</p>
-                        </div>
-                        <div class="flex justify-between items-center mb-1.5">
-                          <div class="flex space-x-3 items-center">
-                            <div class="w-2.5 h-2.5 rounded-full bg-warning-300"></div>
-                            <span class="text-sm text-bgray-600 dark:text-white font-medium">Spending</span>
-                          </div>
-                          <p class="text-bgray-900 font-bold text-sm dark:text-bgray-50">28%</p>
-                        </div>
-                        <div class="flex justify-between items-center mb-1.5">
-                          <div class="flex space-x-3 items-center">
-                            <div class="w-2.5 h-2.5 rounded-full bg-bgray-200"></div>
-                            <span class="text-sm text-bgray-600 dark:text-white font-medium">Others</span>
-                          </div>
-                          <p class="text-bgray-900 font-bold text-sm dark:text-bgray-50">59%</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-                
+        <div class="2xl:flex 2xl:space-x-[48px]  ">
+  <section class="2xl:flex-1 2xl:mb-0 mb-6 hidden lg:block">
+    <!-- total widget -->
+    <div class="w-full mb-6">
+      <div class="grid lg:grid-cols-3 grid-cols-1 gap-4">
+        <!-- Checking Balance -->
+        <div class="p-4 rounded-lg bg-white dark:bg-darkblack-600 shadow-md">
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex space-x-2 items-center">
+              <div class="icon">
+                <span>
+                  <img src="{% static 'assets/images/icons/total-earn.svg' %}" alt="icon" />
+                </span>
               </div>
-
-
-<!-- Transaction Table -->
-<div class="w-full py-[20px] px-[24px] rounded-lg bg-white dark:bg-darkblack-600">
-  <div class="flex flex-col space-y-5">
-  <div style="overflow-y:scroll; max-height:400px;" class="table-content w-full overflow-x-auto">
-    <table class="w-full border-collapse">
-      <!-- Table Head -->
-      <thead class="sticky">
-        <tr class="border-b border-bgray-300 dark:border-darkblack-400 bg-bgray-100 dark:bg-darkblack-500">
-       
-          <th class="py-4 px-6 text-left font-medium text-bgray-600 dark:text-bgray-50">Transaction Date</th>
-          <th class="py-4 px-6 text-left font-medium text-bgray-600 dark:text-bgray-50">Amount</th>
-          <th class="py-4 px-6 text-left font-medium text-bgray-600 dark:text-bgray-50">Transaction Type</th>
-          <th class="py-4 px-6 text-left font-medium text-bgray-600 dark:text-bgray-50">Status</th>
-          <th class="py-4 px-6 text-left font-medium text-bgray-600 dark:text-bgray-50">Reference</th>
-          <th class="py-4 px-6"></th>
-        </tr>
-      </thead>
-
-      <!-- Table Body -->
-      <tbody>
-        {% for transaction in transactions %}
-        <tr class="border-b border-bgray-300 dark:border-darkblack-400">
-        
-
-          <!-- Transaction Date -->
-          <td class="py-4 px-6">
-            <p class="font-medium text-base text-bgray-900 dark:text-white">
-              {{ transaction.transaction_date|date:"Y-m-d H:i" }}
-            </p>
-          </td>
-
-          <!-- Amount -->
-          <td class="py-4 px-6">
-            <p class="font-semibold text-base text-bgray-900 dark:text-white">
-              ${{ transaction.amount|intcomma }}
-            </p>
-          </td>
-
-          <!-- Type -->
-          <td class="py-4 px-6">
-            <p class="font-medium text-base text-bgray-900 dark:text-white">
-              {{ transaction.transaction_type|title }}
-            </p>
-          </td>
-
-          <!-- Status with color -->
-          <td class="py-4 px-6">
-            <span style="
-              display:inline-block;
-              padding:2px 10px;
-              border-radius:12px;
-              font-size:12px;
-              font-weight:500;
-              {% if transaction.status == 'pending' %}
-                background-color:#FEF3C7; color:#92400E;
-              {% elif transaction.status == 'approved' or transaction.status == 'successful' %}
-                background-color:#D1FAE5; color:#065F46;
-              {% elif transaction.status == 'failed' or transaction.status == 'rejected' %}
-                background-color:#FEE2E2; color:#B91C1C;
-              {% else %}
-                background-color:#E5E7EB; color:#374151;
-              {% endif %}
-            ">
-              {{ transaction.status|title }}
-            </span>
-          </td>
-
-          <!-- Reference -->
-          <td class="py-4 px-6">
-            <p class="font-medium text-base text-bgray-900 dark:text-white">
-              {{ transaction.reference }}
-            </p>
-          </td>
-
-          <!-- Options Button -->
-          <td class="py-4 px-6 text-center">
-            <button type="button">
-              <svg width="18" height="4" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 2c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1Zm-7 0c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1Zm14 0c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1Z" stroke="#A0AEC0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <span class="text-base text-bgray-900 dark:text-gray-900 dark:text-white font-semibold">Checking Balance</span>
+            </div>
+            <button class="toggle-balance" data-target="checking-balance">
+              <svg class="eye-open" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 3.333c-3.667 0-6.667 2.333-6.667 4.667s3 4.667 6.667 4.667 6.667-2.333 6.667-4.667S11.667 3.333 8 3.333zm0 7.333c-1.833 0-3.333-1.5-3.333-3.333S6.167 4 8 4s3.333 1.5 3.333 3.333S9.833 10.667 8 10.667zm0-5.333a2 2 0 0 0-2 2c0 1.1.9 2 2 2s2-.9 2-2a2 2 0 0 0-2-2z" fill="#6B7280"/>
+              </svg>
+              <svg class="eye-closed hidden" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2l12 12M8 3.333c-3.667 0-6.667 2.333-6.667 4.667 0 1.167.467 2.267 1.333 3.133m10-7.8c0 1.167-.467 2.267-1.333 3.133m-8.667 0c.667.867 1.667 1.467 3 1.467s2.333-.6 3-1.467" stroke="#6B7280" stroke-width="1.2"/>
               </svg>
             </button>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="7" class="py-6 px-6 text-center text-bgray-600 dark:text-bgray-50">
-            No transactions found.
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+          </div>
+          <div class="flex justify-between items-end">
+            <div class="flex-1">
+              <p id="checking-balance" class="text-bgray-900 dark:text-gray-900 dark:text-white font-bold text-2xl leading-[36px]">
+                ${{ account_balance.checking_balance|intcomma }}
+              </p>
+              <div class="flex items-center space-x-1">
+                <span>
+                  <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.4318 0.522827L10.4446 0.522827L7.55575 0.522827L6.56859 0.522827C5.28227 0.522827 4.48082 1.91818 5.12896 3.02928L8.06056 8.05489C8.7037 9.1574 10.2967 9.1574 10.9398 8.05489L13.8714 3.02928C14.5196 1.91818 13.7181 0.522828 11.4318 0.522827Z" fill="#22C55E" />
+                    <path opacity="0.4" d="M2.16878 11.0485L3.15594 11.0485L6.04483 11.0485L7.03199 11.0485C8.31831 11.0485 9.1198 9.6531 8.47163 8.542L5.54002 3.5164C4.89689 2.41389 3.30389 2.41389 2.66076 3.5164L0.729153 8.542C0.0810147 9.6531 0.882466 11.0485 2.16878 11.0485Z" fill="#22C55E" />
+                  </svg>
+                </span>
+                <span class="text-bgray-700 dark:text-bgray-50 text-xs font-medium">Credit</span>
+                <span class="text-success-300 text-xs font-medium">0</span>
+                <span class="text-bgray-700 dark:text-bgray-50 text-xs font-medium">Debit</span>
+                <span class="text-success-300 text-xs font-medium">0</span>
+              </div>
+            </div>
+            <div class="w-[80px]">
+              <canvas id="totalEarn" height="50"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Savings Balance -->
+        <div class="p-4 rounded-lg bg-white dark:bg-darkblack-600 shadow-md">
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex space-x-2 items-center">
+              <div class="icon">
+                <span>
+                  <img src="{% static 'assets/images/icons/total-earn.svg' %}" alt="icon" />
+                </span>
+              </div>
+              <span class="text-base text-bgray-900 dark:text-gray-900 dark:text-white font-semibold">Savings Balance</span>
+            </div>
+            <button class="toggle-balance" data-target="savings-balance">
+              <svg class="eye-open" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 3.333c-3.667 0-6.667 2.333-6.667 4.667s3 4.667 6.667 4.667 6.667-2.333 6.667-4.667S11.667 3.333 8 3.333zm0 7.333c-1.833 0-3.333-1.5-3.333-3.333S6.167 4 8 4s3.333 1.5 3.333 3.333S9.833 10.667 8 10.667zm0-5.333a2 2 0 0 0-2 2c0 1.1.9 2 2 2s2-.9 2-2a2 2 0 0 0-2-2z" fill="#6B7280"/>
+              </svg>
+              <svg class="eye-closed hidden" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2l12 12M8 3.333c-3.667 0-6.667 2.333-6.667 4.667 0 1.167.467 2.267 1.333 3.133m10-7.8c0 1.167-.467 2.267-1.333 3.133m-8.667 0c.667.867 1.667 1.467 3 1.467s2.333-.6 3-1.467" stroke="#6B7280" stroke-width="1.2"/>
+              </svg>
+            </button>
+          </div>
+          <div class="flex justify-between items-end">
+            <div class="flex-1">
+              <p id="savings-balance" class="text-bgray-900 dark:text-gray-900 dark:text-white font-bold text-2xl leading-[36px]">
+                ${{ account_balance.savings_balance|intcomma}}
+              </p>
+              <div class="flex items-center space-x-1">
+                <span>
+                  <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.4318 0.522827L10.4446 0.522827L7.55575 0.522827L6.56859 0.522827C5.28227 0.522827 4.48082 1.91818 5.12896 3.02928L8.06056 8.05489C8.7037 9.1574 10.2967 9.1574 10.9398 8.05489L13.8714 3.02928C14.5196 1.91818 13.7181 0.522828 11.4318 0.522827Z" fill="#22C55E" />
+                    <path opacity="0.4" d="M2.16878 11.0485L3.15594 11.0485L6.04483 11.0485L7.03199 11.0485C8.31831 11.0485 9.1198 9.6531 8.47163 8.542L5.54002 3.5164C4.89689 2.41389 3.30389 2.41389 2.66076 3.5164L0.729153 8.542C0.0810147 9.6531 0.882466 11.0485 2.16878 11.0485Z" fill="#22C55E" />
+                  </svg>
+                </span>
+                <span class="text-bgray-700 dark:text-bgray-50 text-xs font-medium">Credit</span>
+                <span class="text-success-300 text-xs font-medium">0</span>
+                <span class="text-bgray-700 dark:text-bgray-50 text-xs font-medium">Debit</span>
+                <span class="text-success-300 text-xs font-medium">0</span>
+              </div>
+            </div>
+            <div class="w-[80px]">
+              <canvas id="totalSpending" height="50"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Credit Balance -->
+        <div class="p-4 rounded-lg bg-white dark:bg-darkblack-600 shadow-md">
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex space-x-2 items-center">
+              <div class="icon">
+                <span>
+                  <img src="{% static 'assets/images/icons/total-earn.svg' %}" alt="icon" />
+                </span>
+              </div>
+              <span class="text-base text-bgray-900 dark:text-gray-900 dark:text-white font-semibold">Credit Balance</span>
+            </div>
+            <button class="toggle-balance" data-target="credit-balance">
+              <svg class="eye-open" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 3.333c-3.667 0-6.667 2.333-6.667 4.667s3 4.667 6.667 4.667 6.667-2.333 6.667-4.667S11.667 3.333 8 3.333zm0 7.333c-1.833 0-3.333-1.5-3.333-3.333S6.167 4 8 4s3.333 1.5 3.333 3.333S9.833 10.667 8 10.667zm0-5.333a2 2 0 0 0-2 2c0 1.1.9 2 2 2s2-.9 2-2a2 2 0 0 0-2-2z" fill="#6B7280"/>
+              </svg>
+              <svg class="eye-closed hidden" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2l12 12M8 3.333c-3.667 0-6.667 2.333-6.667 4.667 0 1.167.467 2.267 1.333 3.133m10-7.8c0 1.167-.467 2.267-1.333 3.133m-8.667 0c.667.867 1.667 1.467 3 1.467s2.333-.6 3-1.467" stroke="#6B7280" stroke-width="1.2"/>
+              </svg>
+            </button>
+          </div>
+          <div class="flex justify-between items-end">
+            <div class="flex-1">
+              <p id="credit-balance" class="text-bgray-900 dark:text-gray-900 dark:text-white font-bold text-2xl leading-[36px]">
+                ${{ account_balance.credit_balance|intcomma}}
+              </p>
+              <div class="flex items-center space-x-1">
+                <span>
+                  <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.4318 0.522827L10.4446 0.522827L7.55575 0.522827L6.56859 0.522827C5.28227 0.522827 4.48082 1.91818 5.12896 3.02928L8.06056 8.05489C8.7037 9.1574 10.2967 9.1574 10.9398 8.05489L13.8714 3.02928C14.5196 1.91818 13.7181 0.522828 11.4318 0.522827Z" fill="#22C55E" />
+                    <path opacity="0.4" d="M2.16878 11.0485L3.15594 11.0485L6.04483 11.0485L7.03199 11.0485C8.31831 11.0485 9.1198 9.6531 8.47163 8.542L5.54002 3.5164C4.89689 2.41389 3.30389 2.41389 2.66076 3.5164L0.729153 8.542C0.0810147 9.6531 0.882466 11.0485 2.16878 11.0485Z" fill="#22C55E" />
+                  </svg>
+                </span>
+                <span class="text-bgray-700 dark:text-bgray-50 text-xs font-medium">Credit</span>
+                <span class="text-success-300 text-xs font-medium">0</span>
+                <span class="text-bgray-700 dark:text-bgray-50 text-xs font-medium">Debit</span>
+                <span class="text-success-300 text-xs font-medium">0</span>
+              </div>
+            </div>
+            <div class="w-[80px]">
+              <canvas id="totalGoal" height="50"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3  gap-6 mb-12">
+<!-- Account Card -->
+<section class="lg:col-span-2 w-full">
+  <div class="p-4 sm:p-5 rounded-lg dark:bg-darkblack-600 bg-white bg-gradient-to-r from-black/70 to-green-600/60 shadow-lg text-gray-900 text-white dark:text-white h-full backdrop-blur-sm">
+    
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-3 sm:mb-4">
+      <div class="hidden lg:block">
+        <div class="text-xs sm:text-sm font-semibold flex items-center gap-2">
+          <i class="fa-solid fa-building-columns"></i>
+          Belco Community Credit Union
+        </div>
+        <div class="text-xs opacity-80">Primary Account</div>
+      </div>
+      <div class=" lg:hidden">
+  <div class="text-xs sm:text-sm font-semibold flex items-center gap-2">
+    <i class="fa-solid fa-building-columns"></i>
+    Belco Credit Union
   </div>
+  <div class="text-xs opacity-80">{{ request.user.username }}</div>
+</div>
+      <div class="text-[10px] sm:text-sm text-right  bg-gradient-to-r from-gray-800/50 to-green-900/50 px-2 py-1 sm:p-2 rounded-lg">
+        <div class="opacity-80">ACCOUNT NUMBER</div>
+        <div>*****{{ request.user.account_number|slice:"-3:" }}</div>
+      </div>
+    </div>
+
+    <!-- Account Holder & Balance (desktop only) -->
+    <div class="hidden lg:grid grid-cols-2 gap-4 mb-4">
+      <div>
+        <div class="text-sm">Account Holder</div>
+        <div class="text-lg font-semibold flex items-center gap-2">
+          <i class="fa-solid fa-user-circle"></i> {{ request.user.username }}
+        </div>
+        <div class="text-xs flex items-center">
+          <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+          Active
+        </div>
+      </div>
+      <div class="text-right">
+        <div class="text-lg font-semibold flex items-center justify-end gap-4">
+          <i class="fa-brands fa-bitcoin text-yellow-400"></i>
+          {{ btc_amount|intcomma }} BTC 
+          <span class="text-xs">~ ${{ total_balance|intcomma }}</span>
+        </div>
+        <div class="text-xs opacity-80">• 1 BTC = ${{ btc_rate|intcomma }}</div>
+      </div>
+    </div>
+
+    <!-- Fiat Balance -->
+    <div class="text-center mb-3 sm:mb-2">
+      <div class="text-[10px] sm:text-sm">Fiat Balance    </div>
+      <div class="text-xl sm:text-3xl font-bold flex items-center justify-center gap-2">
+      <span id="flat_balance">  ${{ total_balance|intcomma }} </span>
+        <span class="text-[10px] sm:text-xs">
+          <button class="toggle-balance" data-target="flat_balance">
+            <!-- Eye Open -->
+            <svg class="eye-open text-gray-900 dark:text-white" width="16" height="16" fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 3.333c-3.667 0-6.667 2.333-6.667 4.667s3 4.667 6.667 4.667 6.667-2.333 6.667-4.667S11.667 3.333 8 3.333zm0 7.333c-1.833 0-3.333-1.5-3.333-3.333S6.167 4 8 4s3.333 1.5 3.333 3.333S9.833 10.667 8 10.667zm0-5.333a2 2 0 0 0-2 2c0 1.1.9 2 2 2s2-.9 2-2a2 2 0 0 0-2-2z"/>
+            </svg>
+
+            <!-- Eye Closed -->
+            <svg class="eye-closed hidden text-gray-900 dark:text-white" width="16" height="16"
+                fill="none" stroke="currentColor" stroke-width="1.2"
+                xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 2l12 12M8 3.333c-3.667 0-6.667 2.333-6.667 4.667 0 1.167.467 2.267 1.333 3.133m10-7.8c0 1.167-.467 2.267-1.333 3.133m-8.667 0c.667.867 1.667 1.467 3 1.467s2.333-.6 3-1.467"/>
+            </svg>
+  </button>
+</span>
 
 
+      </div>
+      
+  <div class="mt-1 flex justify-start items-start gap-2 text-xs sm:text-sm">
+ 
+      <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+      <span class="text-green-500 font-medium">Active</span>
+  </div>
+    </div>
+
+    <!-- Footer (desktop only) -->
+    <div class="hidden lg:flex justify-between items-center">
+      <div class="text-sm bg-gradient-to-r from-gray-800/50 to-green-900/50 p-2 rounded-lg">
+        Total Portfolio<br />${{ total_balance|intcomma }}
+      </div>
+      <div class="flex space-x-4">
+        <button class="bg-white/20 hover:bg-white/30 text-gray-900 dark:text-white px-2 py-1 sm:p-2 rounded-lg flex items-center gap-2 transition">
+          <i class="fa-solid fa-paper-plane"></i> Send
+        </button>
+        <button class="bg-green-500/80 hover:bg-green-500 text-gray-900 dark:text-white px-2 py-1 sm:p-2 rounded-lg flex items-center gap-2 transition">
+          <i class="fa-solid fa-plus"></i> Add
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Mobile-only action buttons -->
+<div class="flex lg:hidden justify-center space-x-2 mt-3">
+  {% comment %} <button class="bg-white/20 hover:bg-white/30 text-gray-900 dark:text-white text-[10px] px-2 py-1 rounded-lg flex items-center gap-1 transition">
+    <i class="fa-solid fa-paper-plane text-xs"></i> Send
+  </button>
+  <button class="bg-green-500/80 hover:bg-green-500 text-gray-900 dark:text-white text-[10px] px-2 py-1 rounded-lg flex items-center gap-1 transition">
+    <i class="fa-solid fa-plus text-xs"></i> Add
+  </button> {% endcomment %}
+<div class="grid grid-cols-3 gap-3">
+    <!-- Top Up - Circular -->
+    <a href="{% url 'deposit' %}" class="flex flex-col items-center justify-center">
+        <div class="w-14 h-14 bg-yellow-400 dark:bg-yellow-500 rounded-full flex items-center justify-center shadow-lg dark:shadow-yellow-500/25 mb-1">
+            <i class="fa-solid fa-plus text-black dark:text-gray-900 text-lg"></i>
+        </div>
+        <span class="text-gray-900 dark:text-white text-xs font-medium">Top Up</span>
+    </a>
+
+    <!-- Send - Circular -->
+    <a href="{% url 'local_transfer' %}" @click.prevent="showSendMoney = true" class="flex flex-col items-center justify-center">
+        <div class="w-14 h-14 bg-white/20 dark:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg dark:shadow-white/10 mb-1 border border-white/10 dark:border-white/20">
+            <i class="fa-solid fa-paper-plane text-gray-900 dark:text-white text-lg"></i>
+        </div>
+        <span class="text-gray-900 dark:text-white text-xs font-medium">Send</span>
+    </a>
+
+    <!-- Profile - Circular -->
+    <a href="{% url 'profile' %}" class="flex flex-col items-center justify-center">
+        <div class="w-14 h-14 bg-white/20 dark:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg dark:shadow-white/10 mb-1 border border-white/10 dark:border-white/20">
+            <i class="fa-solid fa-user text-gray-900 dark:text-white text-lg"></i>
+        </div>
+        <span class="text-gray-900 dark:text-white text-xs font-medium">Profile</span>
+    </a>
+</div>
 
 
+</div>
+
+<!-- Transaction Bar -->
+<section class="w-full">
+  <div class="p-5 bg-gray-900/90 rounded-lg shadow-md text-gray-900 text-white dark:text-white h-30">
+    <div class="flex justify-between items-center mb-4">
+      <div class="text-sm font-semibold flex items-center gap-2">
+        <i class="fa-solid fa-receipt"></i>
+        Recent Transactions
+      </div>
+      <div class="text-xs text-green-400 cursor-pointer hover:underline">View All</div>
+    </div>
+
+    <div class="space-y-5">
+      {% for txn in transactions|slice:":4" %}
+      <div class="flex justify-between items-center text-sm">
+        <div style="margin-bottom:10px;" class="flex items-center">
+          <span class="bg-gradient-to-r from-gray-800/70 to-green-900/70 p-2 rond mr-2">
+            {% if txn.transaction_type == 'deposit' %}
+              <i class="fa-solid fa-arrow-down text-green-400"></i>
+            {% elif txn.transaction_type == 'withdrawal' %}
+              <i class="fa-solid fa-arrow-up text-red-400"></i>
+            {% elif txn.transaction_type == 'transfer' %}
+              <i class="fa-solid fa-right-left text-blue-400"></i>
+            {% elif txn.transaction_type == 'payment' %}
+              <i class="fa-solid fa-file-invoice-dollar text-yellow-400"></i>
+            {% endif %}
+          </span>
+          <div class="flex flex-col">
+            <span>{{ txn.get_transaction_type_display }}</span>
+            <span class="text-xs text-gray-400">{{ txn.transaction_date|date:"d M Y, H:i" }}</span>
+          </div>
+        </div>
+        <div 
+          class="{% if txn.transaction_type == 'deposit' %}text-green-400
+                  {% elif txn.transaction_type == 'withdrawal' %}text-red-400
+                  {% elif txn.transaction_type == 'transfer' %}text-blue-400
+                  {% else %}text-yellow-400{% endif %} font-medium">
+          {% if txn.transaction_type == 'deposit' %}+{% else %}-{% endif %}${{ txn.amount|intcomma }}
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-gray-400 text-sm">No recent transactions.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+</div>
 
 
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+  <!-- Quick Actions + Quick Transfer -->
+<section class="lg:col-span-2 space-y-6">
+<!-- Quick Actions -->
+<div class="p-5 bg-gray-900 rounded-lg shadow-md text-gray-900 text-white dark:text-white h-auto">
+  <h2 class="text-sm font-semibold mb-4">Quick Actions</h2>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+    <!-- Action 1: Transfer -->
+    <a href="{% url 'local_transfer' %}" class="flex flex-col items-center justify-center p-2 rounded-sm hover:opacity-90 transition">
+      <span class="bg-gradient-to-r from-blue-600/80 to-blue-400/80 p-4 round mb-2 inline-flex items-center justify-center">
+        <i class="fa-solid fa-exchange-alt text-gray-900 dark:text-white text-xl"></i>
+      </span>
+      <span class="text-sm">Transfer</span>
+    </a>
+
+    <!-- Action 2: Loans -->
+    <a href="{% url 'loans' %}" class="flex flex-col items-center justify-center p-2 rounded-sm hover:opacity-90 transition">
+      <span class="bg-gradient-to-r from-green-600/80 to-green-400/80 p-4 round mb-2 inline-flex items-center justify-center">
+        <i class="fa-solid fa-hand-holding-dollar text-gray-900 dark:text-white text-xl"></i>
+      </span>
+      <span class="text-sm">Loans</span>
+    </a>
+
+    <!-- Action 3: Currency Swap -->
+    <a href="{% url 'currency_swap' %}" class="flex flex-col items-center justify-center p-2 rounded-sm hover:opacity-90 transition">
+      <span class="bg-gradient-to-r from-pink-600/80 to-pink-400/80 p-4 round mb-2 inline-flex items-center justify-center">
+        <i class="fa-solid fa-coins text-gray-900 dark:text-white text-xl"></i>
+      </span>
+      <span class="text-sm">Currency Swap</span>
+    </a>
+
+    <!-- Action 4: Deposit -->
+    <a href="{% url 'deposit' %}" class="flex flex-col items-center justify-center p-2 rounded-sm hover:opacity-90 transition">
+      <span class="bg-gradient-to-r from-cyan-600/80 to-cyan-400/80 p-4 round mb-2 inline-flex items-center justify-center">
+        <i class="fa-solid fa-piggy-bank text-gray-900 dark:text-white text-xl"></i>
+      </span>
+      <span class="text-sm">Deposit</span>
+    </a>
   </div>
 </div>
+
+<div x-data>
+  <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Quick Transfer</h3>
+  
+  <div class="p-4 bg-gray-900/90 dark:bg-gray-800/80 rounded-lg shadow-md text-gray-900 dark:text-white flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
+    
+    <!-- Beneficiaries Buttons -->
+    <div class="flex flex-wrap gap-3 sm:gap-4 items-center">
+      {% for beneficiary in beneficiaries|slice:":3" %}
+      <div class="flex flex-col items-center w-16">
+        <button class="flex items-center justify-center w-16 h-16 bg-orange-500 rounded-full text-gray-900 dark:text-white text-lg font-semibold">
+          {{ beneficiary.initials }}
+          <span class="ml-1 text-yellow-400"><i class="fa-solid fa-star"></i></span>
+        </button>
+        <a href="#" class="text-xs text-blue-400 hover:underline truncate w-full text-center">{{ beneficiary.full_name|truncatechars:12 }}</a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- View All Link -->
+    <div class="mt-2 sm:mt-0">
+      <a href="#" @click.prevent="$dispatch('open-beneficiaries')" class="text-xs text-blue-400 hover:underline whitespace-nowrap">
+        View All &gt;
+      </a>
+    </div>
+    
+  </div>
+</div>
+
+
+
+</section>
+
+  <!-- Account Statistics -->
+  <section class="w-full ">
+    <div class="p-5 bg-gray-900 rounded-lg shadow-md text-gray-900n text-white dark:text-white h-full">
+      <h2 class="text-sm font-semibold mb-4">Account Statistics</h2>
+
+      <!-- Transaction Limit -->
+      <div class="p-4 bg-gray-800 rounded-lg mb-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <span class="bg-blue-600 p-2 rond">
+            <i class="fa-solid fa-wallet text-gray-900 dark:text-white"></i>
+          </span>
+          <div>
+            <div class="text-xs text-gray-400">TRANSACTION LIMIT</div>
+            <div class="text-sm font-semibold">$25,000.00</div>
+            <div class="text-xs text-gray-400">Daily limit available</div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Pending Transactions -->
+<div class="p-4 bg-gray-800 rounded-lg mb-4 flex items-center justify-between">
+  <div class="flex items-center space-x-3">
+    <span class="bg-yellow-500 p-2 rond">
+      <i class="fa-solid fa-hourglass-half text-gray-900 dark:text-white"></i>
+    </span>
+    <div>
+      <div class="text-xs text-gray-400">PENDING TRANSACTIONS</div>
+      <div class="text-sm font-semibold">${{ pending_total|intcomma }}</div>
+      <div class="text-xs text-gray-400">Awaiting processing</div>
+    </div>
+  </div>
+</div>
+
+<!-- Total Volume -->
+<div class="p-4 bg-gray-800 rounded-lg flex items-center justify-between">
+  <div class="flex items-center space-x-3">
+    <span class="bg-green-600 p-2 rond">
+      <i class="fa-solid fa-chart-line text-gray-900 dark:text-white"></i>
+    </span>
+    <div>
+      <div class="text-xs text-gray-400">TOTAL VOLUME</div>
+      <div class="text-sm font-semibold">${{ transaction_total|intcomma }}</div>
+      <div class="text-xs text-gray-400">All-time transactions</div>
+    </div>
+  </div>
+</div>
+
+
+    </div>
+  </section>
+</div>
+
+
+<section class="lg:col-span-2 space-y-6">
+  <div class="p-5 bg-gray-900 rounded-lg shadow-md text-gray-900 text-white dark:text-white">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-sm font-semibold">Your Active Card</h2>
+      <a href="#" class="text-xs text-blue-400 hover:underline">Manage Cards</a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Active Card -->
+      {% for card in cards %}
+      <div class="xl:w-66 w-full text-gray-900 dark:text-white text-white rounded-xl p-5 shadow-lg relative overflow-hidden"
+           style="background: linear-gradient(135deg, #0b0c0bff, #10351dff);">
+        
+        <!-- Vendor & Type -->
+        <div class="flex justify-between items-center">
+          <img 
+            src="{% static 'images/' %}{% if card.vendor == 'visa' %}visa.png
+                 {% elif card.vendor == 'mastercard' %}mastercard.png
+                 {% elif card.vendor == 'amex' %}amex.png
+                 {% elif card.vendor == 'discover' %}discover.png
+                 {% else %}default.svg{% endif %}" 
+            alt="{{ card.vendor }}" 
+            class="w-10 h-auto"
+          >
+          <span class="uppercase text-sm tracking-wider font-semibold">
+            {{ card.card_type|capfirst }} Card
+          </span>
+        </div>
+
+        <!-- Chip -->
+        <div class="mt-6">
+          <img src="{% static 'images/chip.png' %}" alt="Card Chip" class="w-10 h-auto">
+        </div>
+
+        <!-- Card Number -->
+        <div class="mt-4 text-lg tracking-widest font-mono">
+          **** **** **** {{ card.account|slice:"-4:" }}
+        </div>
+
+        <!-- Cardholder & Expiry -->
+        <div class="mt-6 flex justify-between items-center">
+          <div>
+            <div class="text-xs opacity-75">Card Holder</div>
+            <div class="font-semibold">{{ card.user.get_full_name }}</div>
+          </div>
+          <div>
+            <div class="text-xs opacity-75">Expires</div>
+            <div class="font-semibold">{{ card.expiry_date|date:"m/y" }}</div>
+          </div>
+        </div>
+
+        <!-- Decorative Circles -->
+        <div class="absolute -top-40 -right-10 w-40 h-40 bg-black opacity-10 round"></div>
+        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-black opacity-10 round"></div>
+      </div>
+      {% empty %}
+      <p class="text-gray-500">No cards available.</p>
+      {% endfor %}
+
+      <!-- Assistance Section -->
+      <div class="p-5 bg-gray-800 rounded-lg shadow-md text-gray-900 text-white dark:text-white">
+        <h2 class="text-sm font-semibold mb-4">Need Assistance?</h2>
+        <p class="text-xs mb-2">Our expert support team is available</p>
+        <p class="text-xs text-green-400 font-semibold mb-4">• 24/7 Live Support</p>
+
+        <div class="flex space-x-2 mb-4">
+          <span class="bg-gray-700 px-3 py-1 rounded-lg text-xs">Quick Response <span class="text-gray-400">&lt; 5 minutes</span></span>
+          <span class="bg-gray-700 px-3 py-1 rounded-lg text-xs">Secure Chat <span class="text-gray-400">Encrypted</span></span>
+        </div>
+
+        <button class="w-full bg-blue-500 py-2 rounded-lg text-sm font-semibold hover:bg-blue-600 transition">
+          <i class="fa-solid fa-comments mr-1"></i> Start Live Chat
+        </button>
+        <p class="text-xs text-gray-400 mt-2 text-center">Or call us directly for urgent matters</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+         
+
 
 
               
@@ -1167,6 +1525,127 @@
     </div>
   </div>
 
+
+<div x-data="{ show: false, showAddBeneficiary: false, selectedBeneficiary: null }"
+     @open-beneficiaries.window="show = true"
+     x-show="show" x-transition.opacity
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/30" x-cloak>
+  <div @click.away="show = false"
+       class="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-sm p-4 shadow-2xl overflow-y-auto max-h-[70vh]">
+
+    <!-- Modal Header -->
+    <div class="flex justify-between items-center mb-3">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Your Beneficiaries</h2>
+      <button @click="show = false" 
+              class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Beneficiaries List -->
+    <div class="space-y-2 max-h-52 overflow-y-auto p-1 custom-scrollbar">
+      {% for beneficiary in beneficiaries %}
+      <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-xl p-2 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center space-x-2">
+          <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+            {{ beneficiary.initials }}
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ beneficiary.full_name }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ beneficiary.account_number }} - {{ beneficiary.bank_name }}</p>
+            <!-- Debug ID -->
+            <p class="text-xs text-gray-500">ID: {{ beneficiary.id }}</p>
+          </div>
+        </div>
+
+        <!-- Transfer Button -->
+        <button 
+          @click="selectedBeneficiary = '{{ beneficiary.id | escapejs }}'; console.log('Selected Beneficiary:', selectedBeneficiary)"
+          class="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+          Transfer
+        </button>
+      </div>
+      {% empty %}
+      <p class="text-sm text-gray-500 dark:text-gray-400">No beneficiaries added yet.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Transfer Options -->
+    <template x-if="selectedBeneficiary">
+      <div class="mt-4 space-y-2">
+        <p class="text-sm text-gray-700 dark:text-gray-300">Choose transfer type:</p>
+        <div class="flex gap-2">
+          <a :href="`{% url 'local_transfer_be' 0 %}`.replace('0', selectedBeneficiary)"
+             @click="console.log('Local Transfer URL:', `{% url 'local_transfer_be' 0 %}`.replace('0', selectedBeneficiary))"
+             class="flex-1 text-center py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+            Local
+          </a>
+          <a :href="`{% url 'international_transfer_be' 0 %}`.replace('0', selectedBeneficiary)"
+             @click="console.log('International Transfer URL:', `{% url 'international_transfer_be' 0 %}`.replace('0', selectedBeneficiary))"
+             class="flex-1 text-center py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition">
+            International
+          </a>
+        </div>
+      </div>
+    </template>
+
+    <!-- Add Beneficiary Inline -->
+    <div class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-3">
+      <button @click="showAddBeneficiary = !showAddBeneficiary"
+              class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+        Add New Beneficiary
+      </button>
+
+      <form id="addBeneficiaryForm" x-show="showAddBeneficiary" x-transition 
+            class="mt-3 space-y-2" x-cloak>
+        {% csrf_token %}
+        <input type="text" name="full_name" placeholder="Full Name" required
+               class="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2">
+        <input type="text" name="account_number" placeholder="Account Number" required
+               class="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2">
+        <input type="text" name="bank_name" placeholder="Bank Name" required
+               class="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2">
+        <input type="text" name="swift_code" placeholder="SWIFT Code"
+               class="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2">
+        <input type="text" name="routing_transit_number" placeholder="Routing Number"
+               class="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2">
+        <input type="text" name="bank_address" placeholder="Bank Address"
+               class="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2">
+        <button type="submit" 
+                class="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+          Save Beneficiary
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Custom Scrollbar Styles -->
+<style>
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px !important;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #00ff7f, #008000) !important;
+    border-radius: 3px !important;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #00ff99, #00cc33) !important;
+  }
+</style>
+
+
+</div>
+
+
+  <script src="//unpkg.com/alpinejs" defer></script>
+
+
   <!-- layout end -->
   <!--scripts -->
   <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
@@ -1178,7 +1657,12 @@
   <script src="{% static 'assets/js/quill.min.js' %}"></script>
   <script src="{% static 'assets/js/main.js' %}"></script>
   <script src="{% static 'assets/js/chart.js' %}"></script>
-  <script src="{% static 'js/logout.js' %}"></script>
+
+
+  
+
+  
+
 
 
   <script>
@@ -1395,6 +1879,110 @@
     });
   });
 </script>
+
+
+<script>
+window.addEventListener('load', () => {
+    const preloader = document.querySelector('.page-loading');
+    
+    // Ensure it stays visible for at least 1.5s
+    setTimeout(() => {
+        preloader.classList.remove('active');
+
+        setTimeout(() => {
+            preloader.style.display = 'none';
+        }, 1500); // match the fade duration
+    }, 1500); // minimum display time
+});
+</script>
+
+
+
+<!-- Toastify CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<!-- Toast container (add at the bottom of <body>) -->
+<div id="toast-container" class="fixed top-1/2 right-4 z-[9999] flex flex-col gap-2"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  function showToast(message, success = true) {
+      Toastify({
+          text: message,
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          stopOnFocus: true,
+          style: {
+              background: success
+                  ? "linear-gradient(90deg, #00b09b, #96c93d)"
+                  : "linear-gradient(90deg, #e74c3c, #e67e22)",
+              color: "#fff",
+              fontWeight: "600",
+              borderRadius: "8px",
+              padding: "10px 15px",
+              fontSize: "14px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          },
+      }).showToast();
+  }
+
+  const addForm = document.getElementById("addBeneficiaryForm");
+  if (!addForm) return;
+
+  addForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(addForm);
+
+      try {
+          const response = await fetch("{% url 'add_beneficiary' %}", {
+              method: "POST",
+              headers: {
+                  "X-Requested-With": "XMLHttpRequest",
+                  "X-CSRFToken": formData.get("csrfmiddlewaretoken")
+              },
+              body: formData
+          });
+
+          // Parse JSON safely
+          let result = {};
+          try {
+              result = await response.json();
+          } catch (err) {
+              console.error("Invalid JSON response:", err);
+              showToast("Server returned invalid data!", false);
+              return;
+          }
+
+          if (result.success) {
+              showToast(result.message, true);
+              addForm.reset();
+              
+              // Close modal if using Alpine.js
+              const modal = addForm.closest("[x-data]");
+              if (modal) modal.__x.$data.showAddBeneficiary = false;
+
+              // Reload after toast duration
+              setTimeout(() => location.reload(), 800);
+          } else {
+              showToast(result.message || "An error occurred!", false);
+          }
+
+      } catch (err) {
+          console.error("Fetch error:", err);
+          showToast("Network or server error occurred!", false);
+      }
+  });
+
+});
+</script>
+
+
+
+
 
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">

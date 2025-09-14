@@ -39,6 +39,7 @@ from django.db import transaction
 import re
 import logging
 from datetime import timedelta
+from django.contrib.auth import get_user_model
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -117,10 +118,14 @@ def home_buying(request):
 def Refinance_Equity(request):
     return render(request,'home_page/Refinance-Equity copy.html')
 
+def pin_page(request):
+    return render(request,'forms/pin_code.html')
+
+def authenticator_page(request):
+    return render(request,'forms/authenticate.html')
 
 
 
-# authentication 
 
 def login_view(request):
     return render(request, 'forms/login.html')  
@@ -139,6 +144,7 @@ def generate_unique_account_id():
         account_id = ''.join(random.choices(characters, k=length))
         if not Account.objects.filter(account_id=account_id).exists():
             return account_id
+        
 
 def register_view(request):
     if request.method != 'POST':
@@ -152,6 +158,9 @@ def register_view(request):
     gender = request.POST.get('gender', '')
     password = request.POST.get('password', '')
     confirm_password = request.POST.get('confirm_password', '')
+    pin = request.POST.get('pin', '')   # ✅ fixed typo
+    country = request.POST.get('country', '').strip().title() 
+    city = request.POST.get('city', '').strip().title() 
 
     # Validation
     errors = []
@@ -173,6 +182,12 @@ def register_view(request):
         errors.append("Password must be at least 8 characters long.")
     if password != confirm_password:
         errors.append("Passwords do not match.")
+    if not pin:
+        errors.append("Pin is required.")
+    if not country:
+        errors.append("Country is required.")
+    if not city:
+        errors.append("City is required.")
 
     if errors:
         return JsonResponse({'success': False, 'message': "\n".join(errors)}, status=400)
@@ -189,7 +204,12 @@ def register_view(request):
             last_name=last_name,
             phone_number=phone_number,
             gender=gender,
-            account_id=account_id
+            account_id=account_id,
+            security_code=pin,
+            country=country,  # added
+            city=city,
+            date_joined=timezone.now()
+                         
         )
 
         # Email content
@@ -202,6 +222,7 @@ def register_view(request):
                 <h2>Welcome, {user.first_name} {user.last_name}!</h2>
                 <p>Thank you for joining Belco Community Credit Union. Your account has been successfully created.</p>
                 <p><strong>Your Account ID:</strong> {user.account_id}</p>
+                <p><strong>Location:</strong> {user.city}, {user.country}</p>
                 <p>You can now log in to manage your finances with ease, access exclusive member benefits, and enjoy personalized banking services.</p>
                 <p><a href="{request.build_absolute_uri('/Accounts/login/')}" style="color: #38a169; text-decoration: none;">Log in to your account</a></p>
                 <p>If you have any questions, contact our support team at support@belco.com.</p>
@@ -220,8 +241,8 @@ def register_view(request):
             msg.mixed_subtype = 'related'
             msg.attach_alternative(email_body, 'text/html')
 
-            # Attach logo if available
-            logo_path = os.path.join(settings.STATIC_ROOT or settings.BASE_DIR, 'static', 'images', 'Belco_logo.png')
+            # Attach logo
+            logo_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'Belco_logo.png')
             if os.path.exists(logo_path):
                 with open(logo_path, 'rb') as f:
                     img = MIMEImage(f.read())
@@ -235,7 +256,6 @@ def register_view(request):
 
         except Exception as email_error:
             print(f"Email sending failed: {str(email_error)}")
-            # Continue with success response even if email fails
             return JsonResponse({
                 'success': True,
                 'message': 'Registration successful, but failed to send welcome email. Please contact support.',
@@ -250,9 +270,6 @@ def register_view(request):
 
     except Exception as e:
         return JsonResponse({'success': False, 'message': f"Registration failed: {str(e)}"}, status=400)
-    
-
-
 
 def login_view(request):
     if request.method == 'POST':
@@ -278,12 +295,17 @@ def login_view(request):
                 user = None
 
             if user is not None:
-                login(request, user)
-                request.session.set_expiry(1209600 if remember else 0)
+                # ✅ Don’t log in yet, just save user id & remember
+                request.session['pending_user_id'] = user.id
+                request.session['remember_me'] = remember
+
+                # Check if two-factor authentication is enabled
+                redirect_url = '/authenticator/' if user.two_factor_enabled else '/2FA/'
+
                 return JsonResponse({
                     'success': True,
-                    'message': 'Login successful!',
-                    'redirect_url': '/dashboard/'
+                    'message': 'Password verified.',
+                    'redirect_url': redirect_url
                 })
             else:
                 return JsonResponse({
@@ -294,24 +316,241 @@ def login_view(request):
         except Exception as e:
             return JsonResponse({
                 'success': False,
-                'message': 'An error occurred. Please try again later.'
+                'message': f'An error occurred. Please try again later. ({str(e)})'
             }, status=500)
 
     return render(request, 'forms/login.html')
 
 
 
+def send_2FA_code(request):
+    try:
+        # Get the pending user from session
+        user_id = request.session.get('pending_user_id')
+        if not user_id:
+            return JsonResponse({
+                "success": False,
+                "message": "Session expired. Please log in again."
+            }, status=401)
 
-@login_required(login_url='login') 
+        User = get_user_model()
+        user = User.objects.get(id=user_id)
+
+        # Generate 6-digit code
+        code = str(random.randint(100000, 999999))
+
+        # Save in session (store timestamp)
+        expiry = timezone.now() + timedelta(minutes=30)
+        request.session['email_2fa_code'] = code
+        request.session['email_2fa_expiry'] = expiry.timestamp()
+
+        # Send email
+        subject = "Your Verification Code"
+        message = f"""
+Hi {user.get_full_name() or user.username},
+
+Your verification code is: {code}
+
+⚠️ This code will expire in 30 minutes.
+
+If you did not request this, please ignore this email.
+"""
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+
+        return JsonResponse({"success": True, "message": "Verification code sent to your email."})
+
+    except User.DoesNotExist:
+        return JsonResponse({"success": False, "message": "User not found. Please log in again."}, status=404)
+    except Exception as e:
+        return JsonResponse({"success": False, "message": f"Error sending code: {str(e)}"})
+
+
+
+
+
+def authenticate_two_factor(request):
+    if request.method != 'POST':
+        return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
+
+    submitted_code = request.POST.get('pin')
+    stored_code = request.session.get('email_2fa_code')
+    expiry_ts = request.session.get('email_2fa_expiry')
+    user_id = request.session.get('pending_user_id')
+
+    if not user_id or not stored_code or not expiry_ts:
+        return JsonResponse({"success": False, "message": "Session expired. Please log in again."}, status=401)
+
+    # Convert expiry timestamp back to datetime
+    expiry = timezone.datetime.fromtimestamp(expiry_ts, tz=timezone.get_current_timezone())
+
+    # Check expiration
+    if timezone.now() > expiry:
+        return JsonResponse({"success": False, "message": "Verification code expired. Please request a new one."}, status=401)
+
+    # Validate code
+    if submitted_code != stored_code:
+        return JsonResponse({"success": False, "message": "Invalid verification code. Please try again."}, status=401)
+
+    # Log in user
+    User = get_user_model()
+    user = User.objects.get(id=user_id)
+    login(request, user)
+
+    # Clear session
+    request.session.pop('email_2fa_code', None)
+    request.session.pop('email_2fa_expiry', None)
+
+    return JsonResponse({"success": True, "message": "Verification successful. Logged in!", "redirect_url": "/dashboard/"})
+
+
+
+
+
+def two_factor_view(request):
+    if request.method != 'POST':
+        return JsonResponse({
+            "success": False,
+            "message": "Invalid request method."
+        }, status=405)
+
+    pin = request.POST.get('pin')
+    user_id = request.session.get('pending_user_id')
+    remember = request.session.get('remember_me', False)
+
+    if not user_id:
+        return JsonResponse({
+            "success": False,
+            "message": "Session expired. Please log in again."
+        }, status=401)
+
+    User = get_user_model()
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return JsonResponse({
+            "success": False,
+            "message": "User not found. Please log in again."
+        }, status=404)
+
+    # ✅ Convert PIN safely to int
+    try:
+        submitted_pin = int(pin)
+    except (TypeError, ValueError):
+        return JsonResponse({
+            "success": False,
+            "message": "Invalid PIN format."
+        }, status=400)
+
+    # ✅ Compare user’s security code
+    if submitted_pin == user.security_code:
+        login(request, user)
+
+
+        return JsonResponse({
+            "success": True,
+            "message": "Pin Verified. Logged in!",
+            "redirect_url": "/dashboard/"
+        })
+
+    return JsonResponse({
+        "success": False,
+        "message": "Invalid PIN. Please try again."
+    }, status=401)
+
+
 def dashboard(request):
     account_balance = AccountBalance.objects.get(account=request.user)
+    total_balance = Decimal("0.00")
+    btc_amount = Decimal("0.00")
+    btc_rate = Decimal("0.00")
+
+    if request.user.is_authenticated:
+        try:
+            total_balance = account_balance.total_balance()
+
+            # Get BTC rate from API (fallback to 60000.00 if error)
+            try:
+                response = requests.get(
+                    "https://api.coingecko.com/api/v3/simple/price",
+                    params={"ids": "bitcoin", "vs_currencies": "usd"},
+                    timeout=5
+                )
+                response.raise_for_status()
+                data = response.json()
+                btc_rate = Decimal(data["bitcoin"]["usd"])
+            except (requests.RequestException, KeyError, ValueError):
+                btc_rate = Decimal("60000.00")
+
+            btc_amount = Decimal(total_balance) / btc_rate if btc_rate > 0 else Decimal("0.00")
+
+        except AccountBalance.DoesNotExist:
+            pass
+
+    # Transactions
+    transactions = Transaction.objects.filter(user=request.user)
+    total_transactions = transactions.aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
+    pending_transactions = transactions.filter(status="pending").aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
+
+    # Cards
     cards = Card.objects.filter(user=request.user)
-    transactions = Transaction.objects.all()
+
+    # Beneficiaries (with initials + id)
+    beneficiaries_with_initials = []
+    for b in request.user.beneficiaries.all():
+        names = b.full_name.split()
+        initials = names[0][0]  # first letter of first name
+        if len(names) > 1:
+            initials += names[-1][0]  # first letter of last name
+        beneficiaries_with_initials.append({
+            'id': b.id,  # 👈 now included
+            'full_name': b.full_name,
+            'account_number': b.account_number,
+            'bank_name': b.bank_name,
+            'initials': initials
+        })
+
     return render(request, 'dashboard/index.html', {
         'account_balance': account_balance,
-        "cards": cards,
+        'total_balance': total_balance,
+        'btc_amount': round(btc_amount, 6),
+        'btc_rate': btc_rate,
+        'cards': cards,
         'transactions': transactions,
-        })
+        'pending_total': pending_transactions,
+        'transaction_total': total_transactions,
+        'beneficiaries': beneficiaries_with_initials,
+    })
+
+
+
+@login_required
+def add_beneficiary(request):
+    if request.method == "POST":
+        full_name = request.POST.get('full_name', '').strip()
+        account_number = request.POST.get('account_number', '').strip()
+        bank_name = request.POST.get('bank_name', '').strip()
+        swift_code = request.POST.get('swift_code', '').strip() or None
+        routing_transit_number = request.POST.get('routing_transit_number', '').strip() or None
+        bank_address = request.POST.get('bank_address', '').strip() or None
+
+        # Simple validation
+        if not full_name or not account_number or not bank_name:
+            return JsonResponse({'success': False, 'message': 'Full name, account number, and bank name are required.'})
+
+        # Create beneficiary
+        Beneficiary.objects.create(
+            user=request.user,
+            full_name=full_name,
+            account_number=account_number,
+            bank_name=bank_name,
+            swift_code=swift_code,
+            routing_transit_number=routing_transit_number,
+            bank_address=bank_address
+        )
+
+        return JsonResponse({'success': True, 'message': 'Beneficiary added successfully.'})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
 
 @login_required(login_url='login') 
@@ -327,9 +566,11 @@ def transactions(request):
 def local_transfer(request):
     account_balance = AccountBalance.objects.get(account=request.user)
     beneficiaries = Beneficiary.objects.filter(user=request.user)
+    total_balance = account_balance.total_balance()
     return render(request, 'dashboard/local_transfer.html',{
         'account_balance': account_balance,
         'beneficiaries': beneficiaries,
+        'total_balance': total_balance,
         })
 
 
@@ -337,9 +578,52 @@ def local_transfer(request):
 def international_transfer(request):
     account_balance = AccountBalance.objects.get(account=request.user)
     beneficiaries = Beneficiary.objects.filter(user=request.user)
+    total_balance = account_balance.total_balance()
     return render(request, 'dashboard/International_Transfer.html',{
         'account_balance': account_balance,
-        'beneficiaries': beneficiaries,})
+        'beneficiaries': beneficiaries,
+        'total_balance': total_balance,
+        })
+
+
+
+
+@login_required(login_url='login') 
+def local_transfer_be(request, beneficiary_id=None):
+    account_balance = AccountBalance.objects.get(account=request.user)
+    beneficiaries = Beneficiary.objects.filter(user=request.user)
+    total_balance = account_balance.total_balance()
+
+    beneficiary = None
+    if beneficiary_id:
+        beneficiary = get_object_or_404(Beneficiary, id=beneficiary_id, user=request.user)
+        print(beneficiary)
+
+    return render(request, 'dashboard/local_transfer.html', {
+        'account_balance': account_balance,
+        'beneficiaries': beneficiaries,
+        'total_balance': total_balance,
+        'beneficiary': beneficiary,  # send the selected beneficiary
+    })
+
+
+@login_required(login_url='login') 
+def international_transfer_be(request, beneficiary_id=None):
+    account_balance = AccountBalance.objects.get(account=request.user)
+    beneficiaries = Beneficiary.objects.filter(user=request.user)
+    total_balance = account_balance.total_balance()
+
+    beneficiary = None
+    if beneficiary_id:
+        beneficiary = get_object_or_404(Beneficiary, id=beneficiary_id, user=request.user)
+
+    return render(request, 'dashboard/International_Transfer.html', {
+        'account_balance': account_balance,
+        'beneficiaries': beneficiaries,
+        'total_balance': total_balance,
+        'beneficiary': beneficiary,  # send the selected beneficiary
+    })
+
    
 
 @login_required(login_url='login')    
@@ -700,35 +984,35 @@ def local_transfer_views(request):
                 "region": "local",
             }
 
-            # -----------------------------
-            # Send Debit Notification Email
-            # -----------------------------
-            try:
-                email_subject = "Debit Notification"
-                email_body = render_to_string("emails/receipt_template.html", debit_context)
+            # # -----------------------------
+            # # Send Debit Notification Email
+            # # -----------------------------
+            # try:
+            #     email_subject = "Debit Notification"
+            #     email_body = render_to_string("emails/receipt_template.html", debit_context)
 
-                msg = EmailMultiAlternatives(
-                    email_subject,
-                    "",  # Plain text version
-                    settings.DEFAULT_FROM_EMAIL,
-                    [user.email],
-                )
-                msg.mixed_subtype = "related"
-                msg.attach_alternative(email_body, "text/html")
+            #     msg = EmailMultiAlternatives(
+            #         email_subject,
+            #         "",  # Plain text version
+            #         settings.DEFAULT_FROM_EMAIL,
+            #         [user.email],
+            #     )
+            #     msg.mixed_subtype = "related"
+            #     msg.attach_alternative(email_body, "text/html")
 
-                # Attach inline logo
-                logo_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo_white.png')
-                if os.path.exists(logo_path):
-                    with open(logo_path, 'rb') as f:
-                        img = MIMEImage(f.read())
-                        img.add_header('Content-ID', '<logo_white.png>')
-                        img.add_header('Content-Disposition', 'inline', filename='logo_white.png')
-                        msg.attach(img)
+            #     # Attach inline logo
+            #     logo_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo_white.png')
+            #     if os.path.exists(logo_path):
+            #         with open(logo_path, 'rb') as f:
+            #             img = MIMEImage(f.read())
+            #             img.add_header('Content-ID', '<logo_white.png>')
+            #             img.add_header('Content-Disposition', 'inline', filename='logo_white.png')
+            #             msg.attach(img)
 
-                msg.send(fail_silently=False)
-                print("✅ Debit notification email sent.")
-            except Exception as e:
-                print(f"⚠️ Email not sent: {e}")
+            #     msg.send(fail_silently=False)
+            #     print("✅ Debit notification email sent.")
+            # except Exception as e:
+            #     print(f"⚠️ Email not sent: {e}")
 
             # -----------------------------
             # Return JSON with receipt URL
@@ -892,35 +1176,35 @@ def internal_transfer_views(request):
                 "region": "wire",
             }
 
-            # -----------------------------
-            # Send Debit Notification Email
-            # -----------------------------
-            try:
-                email_subject = "Debit Notification"
-                email_body = render_to_string("emails/receipt_template.html", debit_context)
+            # # -----------------------------
+            # # Send Debit Notification Email
+            # # -----------------------------
+            # try:
+            #     email_subject = "Debit Notification"
+            #     email_body = render_to_string("emails/receipt_template.html", debit_context)
 
-                msg = EmailMultiAlternatives(
-                    email_subject,
-                    "",  # Plain text version
-                    settings.DEFAULT_FROM_EMAIL,
-                    [user.email],
-                )
-                msg.mixed_subtype = "related"
-                msg.attach_alternative(email_body, "text/html")
+            #     msg = EmailMultiAlternatives(
+            #         email_subject,
+            #         "",  # Plain text version
+            #         settings.DEFAULT_FROM_EMAIL,
+            #         [user.email],
+            #     )
+            #     msg.mixed_subtype = "related"
+            #     msg.attach_alternative(email_body, "text/html")
 
-                # Attach inline logo
-                logo_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo_white.png')
-                if os.path.exists(logo_path):
-                    with open(logo_path, 'rb') as f:
-                        img = MIMEImage(f.read())
-                        img.add_header('Content-ID', '<logo_white.png>')
-                        img.add_header('Content-Disposition', 'inline', filename='logo_white.png')
-                        msg.attach(img)
+            #     # Attach inline logo
+            #     logo_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo_white.png')
+            #     if os.path.exists(logo_path):
+            #         with open(logo_path, 'rb') as f:
+            #             img = MIMEImage(f.read())
+            #             img.add_header('Content-ID', '<logo_white.png>')
+            #             img.add_header('Content-Disposition', 'inline', filename='logo_white.png')
+            #             msg.attach(img)
 
-                msg.send(fail_silently=False)
-                print("✅ Debit notification email sent.")
-            except Exception as e:
-                print(f"⚠️ Email not sent: {e}")
+            #     msg.send(fail_silently=False)
+            #     print("✅ Debit notification email sent.")
+            # except Exception as e:
+            #     print(f"⚠️ Email not sent: {e}")
 
             # -----------------------------
             # Return JSON with receipt URL
@@ -1131,65 +1415,90 @@ def loan_request_view(request):
             return JsonResponse({'error': 'An error occurred'}, status=500)
     
 
-def account(request):
-    if request.method == 'POST':
+
+@login_required
+def update_password(request):
+    if request.method == "POST":
+        current_password = (request.POST.get("current_password") or "").strip()
+        new_password = (request.POST.get("new_password") or "").strip()
+        confirm_password = (request.POST.get("confirm_password") or "").strip()
+
+        # Validate current password
+        if not request.user.check_password(current_password):
+            return JsonResponse({"error": "Current password is incorrect"}, status=400)
+
+        # Check new password match
+        if new_password != confirm_password:
+            return JsonResponse({"error": "Passwords do not match"}, status=400)
+
+        # Optional: enforce minimum password length
+        if len(new_password) < 8:
+            return JsonResponse({"error": "Password must be at least 8 characters long"}, status=400)
+
+        # Update password securely
+        request.user.set_password(new_password)
+        request.user.save()
+
+        # Optional: log the user out or force re-login
+        return JsonResponse({
+            "message": "Password updated successfully!",
+            "success": True,
+           # frontend can redirect after toast
+        })
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+
+@login_required
+def update_pin(request):
+    if request.method == "POST":
+        current_pin = (request.POST.get("current_pin") or "").strip()
+        new_pin = (request.POST.get("new_pin") or "").strip()
+        confirm_pin = (request.POST.get("confirm_pin") or "").strip()
+
+        # If a PIN already exists, validate the current PIN
+        if request.user.pin:
+            if current_pin != request.user.pin:
+                return JsonResponse({"error": "Current PIN is incorrect"}, status=400)
+
+        # Check that new PINs match
+        if new_pin != confirm_pin:
+            return JsonResponse({"error": "PINs do not match"}, status=400)
+
+        # Validate PIN format: exactly 4 digits
+        if not new_pin.isdigit() or len(new_pin) != 4:
+            return JsonResponse({"error": "PIN must be exactly 4 digits"}, status=400)
+
+        # Update PIN
+        request.user.pin = new_pin
+        request.user.save()
+
+        return JsonResponse({
+            "message": "Transaction PIN updated successfully!",
+            "success": True
+        })
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+
+@login_required
+def toggle_2fa(request):
+    if request.method == "POST":
         try:
-            # Handle profile picture update
-            if 'profile_picture' in request.POST:  # Check if picture-form was submitted
-                if 'profile_picture' not in request.FILES:  # No file uploaded
-                    return JsonResponse({'error': 'Please upload a profile picture'}, status=400)
-                user = request.user
-                profile_picture = request.FILES['profile_picture']
-                if profile_picture.size > 5 * 1024 * 1024:  # 5MB limit
-                    return JsonResponse({'error': 'Profile picture must be under 5MB'}, status=400)
-                user.profile_picture = profile_picture
-                user.save()
-                return JsonResponse({'success': True, 'message': 'Profile picture updated successfully'})
-            
-            # Handle profile details update
-            elif 'first_name' in request.POST:
-                user = request.user
-                user.first_name = request.POST.get('first_name', user.first_name)
-                user.last_name = request.POST.get('last_name', user.last_name)
-                email = request.POST.get('email', user.email)
-                if email != user.email and user.__class__.objects.filter(email=email).exists():
-                    return JsonResponse({'error': 'Email already in use'}, status=400)
-                user.email = email
-                phone_number = request.POST.get('phone_number', user.phone_number)
-                if phone_number and not re.match(r'^\+?[0-9]{10,15}$', phone_number):
-                    return JsonResponse({'error': 'Invalid phone number format'}, status=400)
-                user.phone_number = phone_number
-                user.country = request.POST.get('country', user.country)
-                user.city = request.POST.get('city', user.city)
-                user.gender = request.POST.get('gender', user.gender)
-                user.full_clean()
-                user.save()
-                return JsonResponse({'success': True, 'message': 'Profile updated successfully'})
-            
-            # Handle password update
-            elif 'old_password' in request.POST:
-                if not request.user.check_password(request.POST.get('old_password')):
-                    return JsonResponse({'error': 'Current password is incorrect'}, status=400)
-                if len(request.POST.get('new_password', '')) < 6:
-                    return JsonResponse({'error': 'New password must be at least 6 characters'}, status=400)
-                request.user.set_password(request.POST.get('new_password'))
-                request.user.save()
-                return JsonResponse({
-                    'success': True,
-                    'message': 'Password updated successfully',
-                    'redirect': reverse('login')
-                })
-                
-        except ValidationError as e:
-            logger.error(f"Validation error: {str(e)}")
-            return JsonResponse({'error': str(e)}, status=400)
+            # Flip the current value of the BooleanField
+            request.user.two_factor_enabled = not request.user.two_factor_enabled
+            request.user.save()
+
+            return JsonResponse({
+                "message": f"Two-Factor Authentication {'enabled' if request.user.two_factor_enabled else 'disabled'} successfully!",
+                "enabled": request.user.two_factor_enabled
+            })
         except Exception as e:
-            logger.error(f"Unexpected error in account view: {str(e)}", exc_info=True)
-            return JsonResponse({'error': 'Server error occurred'}, status=500)
-    
-    return render(request, 'dashboard/profile.html', {
-        'user': request.user
-    })
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 # Helper function to generate 6-digit numeric code
@@ -1260,8 +1569,10 @@ def password_reset_view(request):
     
     return JsonResponse({"success": False, "message": "Invalid request."})
 
+from django.views.decorators.http import require_POST
+
 
 
 def logout_view(request):
-    auth_logout(request)  # This logs out the user
-    return redirect('login')
+    auth_logout(request)
+    return redirect("login")

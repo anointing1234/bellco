@@ -1,0 +1,334 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Sign In - Belco Community Credit Union</title>
+    <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/output.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon.png' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+     <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aquawolf04/font-awesome-pro@5cd1511/css/all.css">
+    <style>
+      .logo-small {
+        width: 150px !important;
+        height: auto !important;
+        max-width: none !important;
+        margin-top: 20px;
+      }
+      .illustration {
+        max-height: 200px;
+        width: auto;
+      }
+      .spinner-border {
+        display: inline-block;
+        width: 4rem;
+        height: 4rem;
+        vertical-align: text-bottom;
+        border: 0.25em solid #34D399;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spinner-border 0.75s linear infinite;
+      }
+      @keyframes spinner-border {
+        to { transform: rotate(360deg); }
+      }
+      .login-card {
+   
+   padding:20px;
+   border-radius:30px;
+   max-width:400px;
+   box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1), 0 10px 20px rgba(2, 12, 146, 0.05);
+  }
+    </style>
+  </head>
+  <body class="bg-white dark:bg-darkblack-500">
+    <div id="spinner" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <section class="min-h-screen flex flex-col lg:flex-row">
+   
+      <!-- Left Section -->
+      <div style="margin-top:80px;"  class="lg:w-1/2 flex flex-col justify-center   px-4 xl:pl-8 py-6 rounded-2xl ">
+           <header class="text-center  ">
+            <img class="logo-small mx-auto mb-6" src="{% static 'images/logo_white.png' %}" alt="Belco Community Credit Union Logo" />
+
+          </header>
+        <div class=" w-full mx-auto login-card ">
+          <header class="text-center mb-6">
+        
+            <h2
+              class="text-bgray-900 dark:text-white text-3xl font-semibold font-poppins mb-1"
+            >Welcome Back
+
+            </h2>
+            <p class="font-urbanis text-sm font-medium text-bgray-600 dark:text-bgray-50">
+              User
+            </p>
+          </header>
+       <form id="signin-form" class="space-y-3 px-4 sm:px-0">
+  {% csrf_token %}
+
+  <!-- PIN Input -->
+  <div class="relative w-full max-w-xs mx-auto">
+    <label
+      for="pin"
+      class="block text-xs font-medium text-bgray-600 dark:text-bgray-50 mb-1 text-center"
+    >
+      <i class="fas fa-shield-alt mr-2"></i>
+      Enter your 4-digit PIN
+    </label>
+
+    <input
+      id="pin"
+      type="text"
+      name="pin"
+      maxlength="4"
+      pattern="\d{4}"
+      class="text-bgray-800 dark:text-white dark:bg-darkblack-500 dark:border-darkblack-400 
+             border border-bgray-300 h-16 w-full max-w-xs focus:border-success-300 focus:ring-0 
+             rounded-lg px-3 text-center font-mono tracking-[0.5em] text-3xl placeholder:text-bgray-500"
+      placeholder="••••"
+      required
+    />
+  </div>
+
+  <!-- Submit -->
+  <button
+    type="submit"
+    class="py-2.5 flex items-center justify-center text-white font-semibold bg-success-300 
+           hover:bg-success-400 transition-all rounded-lg w-full text-sm mx-auto"
+  >
+    Verify PIN
+  </button>
+</form>
+
+
+      
+          
+        </div>
+                    <!-- Enhanced Footer Links -->
+          <div class="mt-6 text-center space-y-3">
+            <div class="flex items-center justify-center space-x-6 text-xs">
+              <a
+                href="#"
+                class="text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium flex items-center"
+              >
+                <i class="fas fa-shield-alt mr-2 text-sm"></i>
+                Security
+              </a>
+              <a
+                href="#"
+                class="text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium flex items-center"
+              >
+                <i class="fas fa-headset mr-2 text-sm"></i>
+                Support
+              </a>
+              <a
+                href="#"
+                class="text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium flex items-center"
+              >
+                <i class="fas fa-file-contract mr-2 text-sm"></i>
+                <span>Terms</span>
+              </a>
+            </div>
+            <p class="text-xs text-white max-w-xs mx-auto leading-relaxed">
+              By signing in, you agree to our Terms of Service and Privacy Policy. Your
+              data is protected with bank-grade security.
+            </p>
+          </div>
+
+      </div>
+      
+
+      <!-- Right Section -->
+      <div
+        class="lg:w-1/2 hidden lg:flex flex-col justify-center items-center bg-[#F6FAFF] dark:bg-darkblack-600 pt-6 relative"
+      >
+
+        <div class="mb-6">
+              <i style="color:green;" class="fas  fa-shield-alt text-3xl"></i>
+        </div>
+        <div class="text-center max-w-md mb-2">
+          <h3
+            class="text-bgray-900 dark:text-white font-semibold font-poppins text-2xl mb-2"
+          >
+           Secure Access
+          </h3>
+          <p class="text-white text-xs  font-medium">
+           Your security is our priority
+          </p>
+        </div>
+         <!-- Enhanced Features Grid -->
+            <div class="grid grid-cols-2 gap-4 w-full max-w-md">
+                <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <i class="fas text-white  fa-lock text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-white">Encrypted</h3>
+                   
+                    </div>
+                </div>
+                <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas text-white  fa-fingerprint text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm text-white font-semibold">Biometric</h3>
+                     
+                    </div>
+                </div>
+                <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <i class="fas text-white  text-white  fa-user-shield text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm text-white font-semibold">Protected</h3>
+                       
+                    </div>
+                </div>
+                <div class="group flex items-center space-x-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <i class="far text-white  fa-clock"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm text-white font-semibold">24/7 Secure</h3>
+                      
+                    </div>
+                </div>
+            </div>
+      </div>
+
+      <!-- Scripts -->
+      <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+      <script src="{% static 'assets/js/aos.js' %}"></script>
+      <script src="{% static 'assets/js/slick.min.js' %}"></script>
+     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+     <script>
+AOS.init();
+
+// Password visibility toggle
+document.querySelectorAll('.toggle-password').forEach(button => {
+  button.addEventListener('click', () => {
+    const input = button.parentElement.querySelector('input');
+    const eyeOpen = button.querySelector('.eye-open');
+    const eyeClosed = button.querySelector('.eye-closed');
+    if (input.type === 'password') {
+      input.type = 'text';
+      eyeOpen.classList.add('hidden');
+      eyeClosed.classList.remove('hidden');
+    } else {
+      input.type = 'password';
+      eyeOpen.classList.remove('hidden');
+      eyeClosed.classList.add('hidden');
+    }
+  });
+});
+
+function showSpinner() {
+  document.getElementById('spinner').classList.remove('hidden');
+}
+
+function hideSpinner() {
+  document.getElementById('spinner').classList.add('hidden');
+}
+
+function showAlert(message, type, redirectUrl = null) {
+  console.log(`Showing alert: ${message}, Type: ${type}, URL: ${redirectUrl}`);
+  Toastify({
+    text: message,
+    duration: type === "success" ? 2000 : 4000,
+    close: true,
+    gravity: "top",
+    position: "right",
+    stopOnFocus: true,
+    style: {
+      background: type === "success"
+        ? "linear-gradient(135deg, #1a3c34, #00c853)"
+        : "linear-gradient(135deg, #3c1a1a, #ff1744)",
+      color: "#fff",
+      borderRadius: "10px",
+      boxShadow: "0 6px 16px rgba(0,0,0,0.4)",
+      fontFamily: "'Arial', sans-serif",
+      fontSize: "16px",
+      fontWeight: "500",
+      padding: "12px 20px",
+      maxWidth: "300px",
+      lineHeight: "1.4",
+      border: "1px solid rgba(255,255,255,0.1)",
+    },
+    onClick: function() {
+      if (redirectUrl && type !== "success") {
+        window.location.href = redirectUrl;
+      }
+    }
+  }).showToast();
+
+  if (type === "success" && redirectUrl) {
+    setTimeout(() => {
+      window.location.href = redirectUrl;
+    }, 3000);
+  }
+}
+
+function login(event) {
+  event.preventDefault();
+  showSpinner();
+
+  const form = document.getElementById('signin-form');
+  const formData = new FormData(form);
+  const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  fetch("{% url 'two_factor_view' %}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': csrfToken
+    },
+    credentials: 'same-origin' // <-- Added to send session cookie
+  })
+  .then(async (response) => {
+    let data;
+    try {
+      data = await response.json();
+    } catch (error) {
+      hideSpinner();
+      showAlert('Invalid server response. Please try again.', 'error');
+      return;
+    }
+
+    hideSpinner();
+
+    if (response.ok && data.success) {
+      showAlert(data.message || 'Login successful!', 'success', data.redirect_url || '{% url "dashboard" %}');
+    } else {
+      showAlert(data.message || 'Invalid credentials. Please try again.', 'error');
+    }
+  })
+  .catch((error) => {
+    hideSpinner();
+    showAlert('Something went wrong. Please try again later.', 'error');
+    console.error('Fetch error:', error);
+  });
+}
+
+document.getElementById('signin-form').addEventListener('submit', login);
+</script>
+
+      <script src="{% static 'assets/js/chart.js' %}"></script>
+      <script src="{% static 'assets/js/main.js' %}"></script>
+    </body>
+</html>
