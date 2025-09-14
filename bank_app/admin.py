@@ -601,22 +601,22 @@ class ExchangeAdmin(ModelAdmin):
     list_per_page = 25
     autocomplete_fields = ['user']
 
-# @admin.register(ResetPassword)
-# class ResetPasswordAdmin(ModelAdmin):
-#     list_display = ['email', 'reset_code', 'created_at', 'expires_at', 'is_valid']
-#     search_fields = ['email']
-#     readonly_fields = ['reset_code', 'created_at', 'expires_at']
-#     list_filter = ['created_at']
-#     list_per_page = 25
+@admin.register(ResetPassword)
+class ResetPasswordAdmin(ModelAdmin):
+    list_display = ['email', 'reset_code', 'created_at', 'expires_at', 'is_valid']
+    search_fields = ['email']
+    readonly_fields = ['reset_code', 'created_at', 'expires_at']
+    list_filter = ['created_at']
+    list_per_page = 25
 
-# @admin.register(TransferCode)
-# class TransferCodeAdmin(ModelAdmin):
-#     list_display = ['user', 'tac_code', 'tax_code', 'imf_code', 'created_at', 'is_valid']
-#     search_fields = ['user__email', 'tac_code', 'tax_code', 'imf_code']
-#     list_filter = ['used', 'created_at']
-#     readonly_fields = ['tac_code', 'tax_code', 'imf_code', 'created_at', 'expires_at']
-#     list_per_page = 25
-#     autocomplete_fields = ['user']
+@admin.register(TransferCode)
+class TransferCodeAdmin(ModelAdmin):
+    list_display = ['user', 'tac_code', 'tax_code', 'imf_code', 'created_at', 'is_valid']
+    search_fields = ['user__email', 'tac_code', 'tax_code', 'imf_code']
+    list_filter = ['used', 'created_at']
+    readonly_fields = ['tac_code', 'tax_code', 'imf_code', 'created_at', 'expires_at']
+    list_per_page = 25
+    autocomplete_fields = ['user']
 
 @admin.register(Transaction)
 class TransactionAdmin(ModelAdmin):
