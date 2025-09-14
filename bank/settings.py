@@ -26,6 +26,9 @@ env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR,'file.env'))
 
 
+# settings.py
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -40,10 +43,7 @@ DEBUG = False
 CSRF_TRUSTED_ORIGINS = ["https://belcoccu.com"]
 ALLOWED_HOSTS = ["belcoccu.com"]
 
-SESSION_COOKIE_SECURE = True  # Use secure cookies over HTTPS
-CSRF_COOKIE_SECURE = True    # Use secure CSRF cookies over HTTPS
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Expire session when browser closes
-# Ensure no expiration time is set for session cookies  # Ensures sessions end when browser closes
+
 
 # Application definition
 AUTH_USER_MODEL = 'bank_app.Account'
@@ -76,7 +76,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'bank_app.middleware.SessionTimeoutMiddleware', 
 ]
 
 ROOT_URLCONF = 'bank.urls'
@@ -291,11 +290,11 @@ UNFOLD = {
                         "icon": "swap_horiz",
                         "link": reverse_lazy("admin:bank_app_transfer_changelist"),
                     },
-                    {
-                        "title": _("Transfer Codes"),
-                        "icon": "code",
-                        "link": reverse_lazy("admin:bank_app_transfercode_changelist"),
-                    },
+                    # {
+                    #     "title": _("Transfer Codes"),
+                    #     "icon": "code",
+                    #     "link": reverse_lazy("admin:bank_app_transfercode_changelist"),
+                    # },
                     {
                         "title": _("Beneficiaries"),
                         "icon": "person_add",
@@ -334,11 +333,11 @@ UNFOLD = {
                         "icon": "receipt",
                         "link": reverse_lazy("admin:bank_app_transaction_changelist"),
                     },
-                    {
-                        "title": _("Reset Passwords"),
-                        "icon": "lock_reset",
-                        "link": reverse_lazy("admin:bank_app_resetpassword_changelist"),
-                    },
+                    # {
+                    #     "title": _("Reset Passwords"),
+                    #     "icon": "lock_reset",
+                    #     "link": reverse_lazy("admin:bank_app_resetpassword_changelist"),
+                    # },
                 ],
             },
         ],

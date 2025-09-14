@@ -38,6 +38,11 @@ urlpatterns = [
     path('login_view/',views.login_view,name='login_view'),
     path('login/',views.login_view,name='login'),
     path('signup/',views.signup_view,name='signup'),
+    path('2FA/',views.pin_page,name='2FA'),
+    path('authenticator/',views.authenticator_page,name='authenticator'),
+    path('send_2FA_code/',views.send_2FA_code,name='send_2FA_code'),
+    path('authen_two_factor/',views.authenticate_two_factor,name='authen_two_factor'),
+    path('two_factor_view/',views.two_factor_view,name='two_factor_view'),
     path('dashboard/',views.dashboard,name='dashboard'),
     path('transactions/',views.transactions,name='transactions'),
     path('local_transfer/',views.local_transfer,name='local_transfer'),
@@ -48,6 +53,11 @@ urlpatterns = [
     path('currency_swap/',views.currency_swap,name='currency_swap'),
     path('profile/',views.profile,name='profile'),
     path('reset/',views.reset,name='reset'),
+
+
+    path('local_transfer_be/<int:beneficiary_id>/', views.local_transfer_be, name='local_transfer_be'),
+    path('international_transfer_be/<int:beneficiary_id>/', views.international_transfer_be, name='international_transfer_be'),
+
 
 
     # Transactions views 
@@ -61,9 +71,13 @@ urlpatterns = [
     path('internal_transfer/', views.internal_transfer_views, name='internal_transfer'),
     path('exchange_submit/', views.exchange_submit_view, name='exchange_submit'),
     path('loan/request/', views.loan_request_view, name='loan_request_view'),
-    path('account/', views.account, name='account'),
     path('logout/',views.logout_view, name='logout'),
     path('password-reset/', views.password_reset_view, name='password_reset'),
+    path("update_password/", views.update_password, name="update_password"),
+    path("update_pin/", views.update_pin, name="update_pin"),
+    path("toggle_2fa/", views.toggle_2fa, name="toggle_2fa"),
+    path('add-beneficiary/', views.add_beneficiary, name='add_beneficiary'),
+
 
 
     re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),

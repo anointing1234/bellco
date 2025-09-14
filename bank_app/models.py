@@ -13,6 +13,7 @@ import qrcode
 from io import BytesIO
 from django.core.files import File
 from PIL import Image
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Shared choices
 STATUS_CHOICES = (
@@ -74,28 +75,6 @@ class AccountManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         
-        # Create default AccountBalance with USD balances
-        account_balance = AccountBalance.objects.create(account=user)
-        
-        # Create default CurrencyBalance records for GBP and EUR
-        for currency in ['GBP', 'EUR']:
-            for balance_type in BALANCE_TYPE_CHOICES:
-                CurrencyBalance.objects.create(
-                    account_balance=account_balance,
-                    currency=currency,
-                    balance_type=balance_type[0],
-                    balance=0.00
-                )
-        
-        # Create a Visa debit card for non-admin users
-        if not (extra_fields.get('is_staff', False) or extra_fields.get('is_superuser', False)):
-            Card.objects.create(
-                user=user,
-                card_type='debit',
-                vendor='visa',
-                status='pending',
-                balance_type='CHECKING'
-            )
         
         return user
 
@@ -132,11 +111,19 @@ class Account(AbstractBaseUser, PermissionsMixin):
     country = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
-    cot_code = models.CharField(max_length=8, blank=True, null=True, unique=True)
-    tax_code = models.CharField(max_length=8, blank=True, null=True, unique=True)
-    imf_code = models.CharField(max_length=8, blank=True, null=True, unique=True)
+    security_code = models.IntegerField(
+            blank=True,
+            null=True,
+            validators=[
+                MinValueValidator(100000, message='Security code must be at least 100000.'),
+                MaxValueValidator(999999, message='Security code must be at most 999999.')
+            ]
+        )
+    
+
+    two_factor_enabled = models.BooleanField(default=False)
     account_number = models.CharField(max_length=20, unique=True, blank=True, null=True)
-    date_joined = models.DateTimeField(verbose_name="Date Joined", auto_now_add=True)
+    date_joined = models.DateTimeField(verbose_name="Date Joined",blank=True, null=True)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -230,6 +217,11 @@ class AccountBalance(models.Model):
         validators=[MinValueValidator(0.00)],
         help_text="Outstanding credit balance in USD."
     )
+
+    
+    def total_balance(self):
+        return self.checking_balance + self.savings_balance - self.credit_balance
+
 
     def __str__(self):
         return f"USD Balances for {self.account.email}: Checking=${self.checking_balance}, Savings=${self.savings_balance}, Credit=${self.credit_balance}"

@@ -22,83 +22,138 @@ from django.utils import timezone
 import uuid
 
 
+
+
 # Unregister the default Group admin to avoid AlreadyRegistered error
 admin.site.unregister(Group)
 
-
 class AccountCreationAdminForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, label="Password")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+    password = forms.CharField(
+        label="Password",
+        required=False,
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'vTextField',  # Django admin default style
+                'style': 'width: 300px; background-color: #1e1e1e; color: #fff; border: 1px solid #555; padding: 5px; border-radius: 3px;',
+                'autocomplete': 'new-password'
+            }
+        )
+    )
+
+    confirm_password = forms.CharField(
+        label="Confirm Password",
+        required=False,
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'vTextField',  
+                'style': 'width: 300px; background-color: #1e1e1e; color: #fff; border: 1px solid #555; padding: 5px; border-radius: 3px;',
+                'autocomplete': 'new-password'
+            }
+        )
+    )
+
+
 
     class Meta:
         model = Account
-        fields = ['email', 'username', 'first_name', 'last_name', 'phone_number', 'gender', 'password']
+        fields = [
+            'email', 'username', 'first_name', 'last_name', 'phone_number',
+            'gender', 'city', 'country', 'pin'
+        ]
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        qs = Account.objects.filter(email=email)
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError("This email is already registered.")
+        if not email or '@' not in email or '.' not in email:
+            raise forms.ValidationError("Enter a valid email address.")
+        return email
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get("phone_number")
+        qs = Account.objects.filter(phone_number=phone_number)
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError("This phone number is already in use.")
+        if not phone_number or not (10 <= len(phone_number.replace('+', '')) <= 15 and phone_number.replace('+', '').isdigit()):
+            raise forms.ValidationError("Enter a valid phone number (10-15 digits, optional leading +).")
+        return phone_number
+
+    def clean_gender(self):
+        gender = self.cleaned_data.get("gender")
+        if gender not in ['M', 'F', 'O', '']:
+            raise forms.ValidationError("Please select a valid gender (Male, Female, Other, Prefer not to say).")
+        return gender
+
+    def clean_pin(self):
+        pin = self.cleaned_data.get("pin")
+        if pin and (not pin.isdigit() or len(pin) != 4):
+            raise forms.ValidationError("PIN must be 4 digits.")
+        return pin
 
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
-        phone_number = cleaned_data.get("phone_number")
-        email = cleaned_data.get("email")
-        gender = cleaned_data.get("gender")
 
-        errors = []
+        if password:
+            if len(password) < 8:
+                raise forms.ValidationError("Password must be at least 8 characters long.")
+            if password != confirm_password:
+                raise forms.ValidationError("Passwords do not match.")
+
         if not cleaned_data.get("first_name"):
-            errors.append("First name is required.")
+            raise forms.ValidationError("First name is required.")
         if not cleaned_data.get("last_name"):
-            errors.append("Last name is required.")
-        if not phone_number or not (10 <= len(phone_number.replace('+', '')) <= 15 and phone_number.replace('+', '').isdigit()):
-            errors.append("Enter a valid phone number (10-15 digits, optional leading +).")
-        if not email or '@' not in email or '.' not in email:
-            errors.append("Enter a valid email address.")
-        if Account.objects.filter(email=email).exists():
-            errors.append("This email is already registered.")
-        if Account.objects.filter(phone_number=phone_number).exists():
-            errors.append("This phone number is already in use.")
-        if gender not in ['M', 'F', 'O']:
-            errors.append("Please select a valid gender (Male, Female, Other).")
-        if not password or len(password) < 8:
-            errors.append("Password must be at least 8 characters long.")
-        if password != confirm_password:
-            errors.append("Passwords do not match.")
-
-        if errors:
-            raise forms.ValidationError(errors)
+            raise forms.ValidationError("Last name is required.")
+        if not cleaned_data.get("country"):
+            raise forms.ValidationError("Country is required.")
+        if not cleaned_data.get("city"):
+            raise forms.ValidationError("City is required.")
 
         return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.password = make_password(self.cleaned_data["password"])
-        user.account_id = generate_unique_account_id()
+        password = self.cleaned_data.get("password")
+        if password:
+            user.password = make_password(password)
+        if not user.pin:
+            user.pin = self.cleaned_data.get("pin") or user.generate_unique_digits("pin", 4)
+        if not self.instance.pk:
+            # New account creation logic
+            user.account_id = generate_unique_account_id()
         if commit:
             user.save()
 
-            # --- Create balances here ---
-            account_balance = AccountBalance.objects.create(account=user)
-            
-            for currency in ['GBP', 'EUR']:
-                for balance_type in BALANCE_TYPE_CHOICES:
-                    CurrencyBalance.objects.create(
-                        account_balance=account_balance,
-                        currency=currency,
-                        balance_type=balance_type[0],
-                        balance=0.00
+            if not self.instance.pk:
+                # Create balances
+                account_balance = AccountBalance.objects.create(account=user)
+                for currency in ['GBP', 'EUR']:
+                    for balance_type in BALANCE_TYPE_CHOICES:
+                        CurrencyBalance.objects.create(
+                            account_balance=account_balance,
+                            currency=currency,
+                            balance_type=balance_type[0],
+                            balance=0.00
+                        )
+
+                # Create default debit card for non-admins
+                if not (user.is_staff or user.is_superuser):
+                    Card.objects.create(
+                        user=user,
+                        card_type='debit',
+                        vendor='visa',
+                        status='pending',
+                        balance_type='CHECKING'
                     )
 
-            # --- Create default debit card for non-admin ---
-            if not (user.is_staff or user.is_superuser):
-                Card.objects.create(
-                    user=user,
-                    card_type='debit',
-                    vendor='visa',
-                    status='pending',
-                    balance_type='CHECKING'
-                )
-
-            self.send_welcome_email(user)
+                self.send_welcome_email(user)
         return user
-
 
     def send_welcome_email(self, user):
         current_year = datetime.now().year
@@ -106,14 +161,12 @@ class AccountCreationAdminForm(forms.ModelForm):
         email_body = f"""
         <html>
             <body style="font-family: Arial, sans-serif; color: #333;">
-                <img src="cid:Belco_logo.png" alt="Belco Community Credit Union Logo" style="width: 150px; margin-bottom: 20px;">
+                <img src="cid:Belco_logo.png" alt="Belco Logo" style="width: 150px; margin-bottom: 20px;">
                 <h2>Welcome, {user.first_name} {user.last_name}!</h2>
-                <p>Thank you for joining Belco Community Credit Union. Your account has been successfully created.</p>
+                <p>Your account has been successfully created.</p>
                 <p><strong>Your Account ID:</strong> {user.account_id}</p>
-                <p>You can now log in to manage your finances with ease, access exclusive member benefits, and enjoy personalized banking services.</p>
-                <p><a href="{settings.SITE_URL}/Accounts/login/" style="color: #38a169; text-decoration: none;">Log in to your account</a></p>
-                <p>If you have any questions, contact our support team at support@belco.com.</p>
-                <p>&copy; {current_year} Belco Community Credit Union. All Rights Reserved.</p>
+                <p><a href="{settings.SITE_URL}/Accounts/login/" style="color: #38a169;">Log in to your account</a></p>
+                <p>&copy; {current_year} Belco Community Credit Union</p>
             </body>
         </html>
         """
@@ -122,7 +175,6 @@ class AccountCreationAdminForm(forms.ModelForm):
             msg.mixed_subtype = 'related'
             msg.attach_alternative(email_body, 'text/html')
 
-            # Attach logo if available
             logo_path = os.path.join(settings.STATIC_ROOT or settings.BASE_DIR, 'static', 'images', 'Belco_logo.png')
             if os.path.exists(logo_path):
                 with open(logo_path, 'rb') as f:
@@ -133,6 +185,8 @@ class AccountCreationAdminForm(forms.ModelForm):
             msg.send(fail_silently=False)
         except Exception as e:
             print(f"Email sending failed: {e}")
+
+
 
 class CardInline(TabularInline):
     model = Card
@@ -160,24 +214,61 @@ class AccountBalanceInline(TabularInline):
 
 @admin.register(Account)
 class AccountAdmin(ModelAdmin):
-    form =  AccountCreationAdminForm  # Use this form for creation
+    form = AccountCreationAdminForm
 
-    list_display = ['account_id','email', 'username', 'first_name', 'last_name', 
-                    'is_staff', 'is_superuser', 'date_joined', 'profile_pic_preview']
-    list_filter = ['is_staff', 'is_superuser', 'country', 'gender']
+    list_display = [
+        'profile_pic_preview',  # moved to first
+        'account_id',
+        'email',
+        'username',
+        'is_active',
+        'is_superuser',
+        'date_joined',
+    ]
+
+    list_filter = ['is_staff', 'is_superuser', 'country', 'gender','two_factor_enabled']
     search_fields = ['email', 'username', 'first_name', 'last_name', 'account_id']
-    readonly_fields = ['cot_code', 'tax_code', 'imf_code', 'account_number', 'pin', 'date_joined', 'last_login']
+    readonly_fields = ['account_number','last_login']
     list_display_links = ['email', 'username']
     ordering = ['-date_joined']
-    autocomplete_fields = ['groups', 'user_permissions']  
+    autocomplete_fields = ['groups', 'user_permissions']
 
     inlines = [AccountBalanceInline, CardInline]
 
+    fieldsets = (
+        (None, {
+            'fields': (
+                'email', 'username', 'first_name', 'last_name',
+                'profile_picture', 'password', 'confirm_password',
+                'country', 'city','gender',
+            )
+        }),
+        # ('Permissions', {
+        #     'fields': ('is_active', 'is_staff', 'is_superuser')
+        # }),
+        ('Important Dates', {
+            'fields': ('last_login','date_joined',)  # now editable
+        }),
+        ('Two Factor', {
+            'fields': ('two_factor_enabled',)
+        }),
+        ('Account Info', {
+            'fields': ('account_number', 'pin')
+        }),
+    )
+
+
     def profile_pic_preview(self, obj):
         if obj.profile_picture and hasattr(obj.profile_picture, 'url'):
-            return format_html('<img src="{}" width="40" height="40" style="border-radius:50%;" />', obj.profile_picture.url)
-        return format_html('<img src="{}" width="40" height="40" style="border-radius:50%;" />', static('assets/images/avatar/default_profile.png'))
-
+            return format_html(
+                '<img src="{}" width="40" height="40" style="border-radius:50%;" />',
+                obj.profile_picture.url
+            )
+        return format_html(
+            '<img src="{}" width="40" height="40" style="border-radius:50%;" />',
+            static('assets/images/avatar/default_profile.png')
+        )
+    profile_pic_preview.short_description = "Profile Picture"
 
 
 @admin.register(AccountBalance)
@@ -242,60 +333,162 @@ class AccountBalanceAdmin(ModelAdmin):
         self.save_model(request, form.instance, form, change)
 
 
+
+# Define choices at module level (as provided in your model)
+CURRENCY_CHOICES = (
+    ('USD', 'US Dollar'),
+    ('GBP', 'British Pound'),
+    ('EUR', 'Euro'),
+)
+
+BALANCE_TYPE_CHOICES = (
+    ('CHECKING', 'Checking'),
+    ('SAVINGS', 'Savings'),
+    ('CREDIT', 'Credit'),
+)
+
 @admin.register(CurrencyBalance)
 class CurrencyBalanceAdmin(ModelAdmin):
-    list_display = ['get_user_email', 'currency', 'balance_type', 'balance']
-    list_editable = ['balance']  # ✅ balance editable directly
-    list_filter = ['currency', 'balance_type']
+    list_display = ['get_user_email', 'get_username', 'currency_display', 'balance_type_display', 'balance', 'formatted_balance']
+    list_editable = ['balance']  # Allow direct editing of balance
+    list_filter = ['currency', 'balance_type', 'account_balance__account__is_active']
     search_fields = ['account_balance__account__email', 'account_balance__account__username']
     list_per_page = 25
     autocomplete_fields = ['account_balance']
+    list_select_related = ['account_balance__account']  # Optimize queries
+    ordering = ['account_balance__account__email', 'currency', 'balance_type']
+    actions = ['reset_balance']  # Add action to reset balance
 
     def get_user_email(self, obj):
+        """Display user's email."""
         return obj.account_balance.account.email
     get_user_email.short_description = "User Email"
 
+    def get_username(self, obj):
+        """Display user's username."""
+        return obj.account_balance.account.username
+    get_username.short_description = "Username"
+
+    def currency_display(self, obj):
+        """Display full currency name."""
+        return dict(CURRENCY_CHOICES).get(obj.currency, obj.currency)
+    currency_display.short_description = "Currency"
+
+    def balance_type_display(self, obj):
+        """Display full balance type name."""
+        return dict(BALANCE_TYPE_CHOICES).get(obj.balance_type, obj.balance_type)
+    balance_type_display.short_description = "Account Type"
+
+    def formatted_balance(self, obj):
+        """Display balance with currency formatting."""
+        return f"{obj.balance:,.2f} {obj.currency}"
+    formatted_balance.short_description = "Formatted Balance"
+
+    def reset_balance(self, request, queryset):
+        """Action to reset selected balances to 0."""
+        for obj in queryset:
+            if obj.balance != 0:
+                with transaction.atomic():
+                    balance_change = -obj.balance
+                    obj.balance = 0
+                    obj.save()
+                    # Log as a withdrawal if balance was positive
+                    if balance_change < 0:
+                        Transaction.objects.create(
+                            user=obj.account_balance.account,
+                            amount=-balance_change,
+                            transaction_type="withdrawal",
+                            description=f"Admin Reset {obj.currency} {obj.balance_type} Balance",
+                            status="completed",
+                            transaction_date=timezone.now(),
+                            to_account=str(obj.account_balance.account.id)
+                        )
+        self.message_user(request, f"Successfully reset {queryset.count()} balance(s).", level=messages.SUCCESS)
+    reset_balance.short_description = "Reset selected balances to 0"
+
     def save_model(self, request, obj, form, change):
-        balance_change = None
+        """Handle balance changes and create related Deposit/Transaction records."""
+        try:
+            with transaction.atomic():
+                balance_change = None
+                if change:  # Editing existing record
+                    old_obj = CurrencyBalance.objects.select_related('account_balance__account').get(pk=obj.pk)
+                    if obj.balance != old_obj.balance:
+                        balance_change = obj.balance - old_obj.balance
+                else:  # New record
+                    if obj.balance > 0:
+                        balance_change = obj.balance
 
-        if change:  # Editing existing record
-            old_obj = CurrencyBalance.objects.get(pk=obj.pk)
-            if obj.balance != old_obj.balance:
-                balance_change = obj.balance - old_obj.balance
-        else:
-            # New record
-            if obj.balance > 0:
-                balance_change = obj.balance
+                # Validate balance
+                if obj.balance < 0:
+                    self.message_user(request, "Balance cannot be negative.", level=messages.ERROR)
+                    return
 
-        # Save object AFTER tracking changes
-        super().save_model(request, obj, form, change)
+                # Save the object
+                super().save_model(request, obj, form, change)
 
-        # If balance increased, create Deposit & Transaction
-        if balance_change and balance_change > 0:
-            Deposit.objects.create(
-                user=obj.account_balance.account,
-                amount=balance_change,
-                account=obj.balance_type,
-                status="completed",
-                date=timezone.now()
-            )
+                # Create Deposit and Transaction for positive balance changes
+                if balance_change and balance_change > 0:
+                    Deposit.objects.create(
+                        user=obj.account_balance.account,
+                        amount=balance_change,
+                        account=obj.balance_type,
+                        status="completed",
+                        date=timezone.now()
+                    )
 
-            Transaction.objects.create(
-                user=obj.account_balance.account,
-                amount=balance_change,
-                transaction_type="deposit",
-                description=f"Admin deposit to {obj.currency} {obj.balance_type} balance",
-                status="completed",
-                transaction_date=timezone.now(),
-                to_account=str(obj.account_balance.account.id)
-            )
+                    Transaction.objects.create(
+                        user=obj.account_balance.account,
+                        amount=balance_change,
+                        transaction_type="deposit",
+                        description=f"Admin Deposit to {obj.currency} {obj.balance_type} Balance",
+                        status="completed",
+                        transaction_date=timezone.now(),
+                        to_account=str(obj.account_balance.account.id)
+                    )
+                elif balance_change and balance_change < 0:
+                    # Log negative balance changes as withdrawals
+                    Transaction.objects.create(
+                        user=obj.account_balance.account,
+                        amount=-balance_change,
+                        transaction_type="withdrawal",
+                        description=f"Admin Adjustment to {obj.currency} {obj.balance_type} Balance",
+                        status="completed",
+                        transaction_date=timezone.now(),
+                        to_account=str(obj.account_balance.account.id)
+                    )
+
+        except Exception as e:
+            self.message_user(request, f"Error saving balance: {str(e)}", level=messages.ERROR)
 
     def save_related(self, request, form, formsets, change):
-        """
-        Ensures balance changes done in list_editable also trigger deposits/transactions.
-        """
+        """Ensure list_editable balance changes trigger deposits/transactions."""
         super().save_related(request, form, formsets, change)
         self.save_model(request, form.instance, form, change)
+
+    def get_queryset(self, request):
+        """Optimize queryset with select_related for better performance."""
+        return super().get_queryset(request).select_related('account_balance__account')
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        """Add balance change history to change view."""
+        extra_context = extra_context or {}
+        if object_id:
+            balance = CurrencyBalance.objects.get(pk=object_id)
+            deposits = Deposit.objects.filter(
+                user=balance.account_balance.account,
+                account=balance.balance_type
+            ).order_by('-date')[:5]
+            transactions = Transaction.objects.filter(
+                user=balance.account_balance.account,
+                to_account=str(balance.account_balance.account.id),
+                transaction_type__in=['deposit', 'withdrawal']
+            ).order_by('-transaction_date')[:5]
+            extra_context.update({
+                'recent_deposits': deposits,
+                'recent_transactions': transactions,
+            })
+        return super().change_view(request, object_id, form_url, extra_context)
 
 
 @admin.register(Card)
@@ -408,22 +601,22 @@ class ExchangeAdmin(ModelAdmin):
     list_per_page = 25
     autocomplete_fields = ['user']
 
-@admin.register(ResetPassword)
-class ResetPasswordAdmin(ModelAdmin):
-    list_display = ['email', 'reset_code', 'created_at', 'expires_at', 'is_valid']
-    search_fields = ['email']
-    readonly_fields = ['reset_code', 'created_at', 'expires_at']
-    list_filter = ['created_at']
-    list_per_page = 25
+# @admin.register(ResetPassword)
+# class ResetPasswordAdmin(ModelAdmin):
+#     list_display = ['email', 'reset_code', 'created_at', 'expires_at', 'is_valid']
+#     search_fields = ['email']
+#     readonly_fields = ['reset_code', 'created_at', 'expires_at']
+#     list_filter = ['created_at']
+#     list_per_page = 25
 
-@admin.register(TransferCode)
-class TransferCodeAdmin(ModelAdmin):
-    list_display = ['user', 'tac_code', 'tax_code', 'imf_code', 'created_at', 'is_valid']
-    search_fields = ['user__email', 'tac_code', 'tax_code', 'imf_code']
-    list_filter = ['used', 'created_at']
-    readonly_fields = ['tac_code', 'tax_code', 'imf_code', 'created_at', 'expires_at']
-    list_per_page = 25
-    autocomplete_fields = ['user']
+# @admin.register(TransferCode)
+# class TransferCodeAdmin(ModelAdmin):
+#     list_display = ['user', 'tac_code', 'tax_code', 'imf_code', 'created_at', 'is_valid']
+#     search_fields = ['user__email', 'tac_code', 'tax_code', 'imf_code']
+#     list_filter = ['used', 'created_at']
+#     readonly_fields = ['tac_code', 'tax_code', 'imf_code', 'created_at', 'expires_at']
+#     list_per_page = 25
+#     autocomplete_fields = ['user']
 
 @admin.register(Transaction)
 class TransactionAdmin(ModelAdmin):
