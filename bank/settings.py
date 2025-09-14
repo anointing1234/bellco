@@ -43,10 +43,6 @@ DEBUG = False
 CSRF_TRUSTED_ORIGINS = ["https://belcoccu.com"]
 ALLOWED_HOSTS = ["belcoccu.com"]
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 9659c24 (commted)
 
 # Application definition
 AUTH_USER_MODEL = 'bank_app.Account'
@@ -238,12 +234,12 @@ UNFOLD = {
                 "link": reverse_lazy("admin:bank_app_beneficiary_changelist"),
                 "description": _("Manage beneficiaries for transfers."),
             },
-            {
-                "title": _("Reset Passwords"),
-                "icon": "lock_reset",
-                "link": reverse_lazy("admin:bank_app_resetpassword_changelist"),
-                "description": _("Manage password reset requests."),
-            },
+            # {
+            #     "title": _("Reset Passwords"),
+            #     "icon": "lock_reset",
+            #     "link": reverse_lazy("admin:bank_app_resetpassword_changelist"),
+            #     "description": _("Manage password reset requests."),
+            # },
         ],
     },
     "SIDEBAR": {
