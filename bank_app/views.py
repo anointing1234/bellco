@@ -555,7 +555,7 @@ def add_beneficiary(request):
 
 @login_required(login_url='login') 
 def transactions(request):
-    transactions = Transaction.objects.all()
+    transactions = request.user.transactions.all().order_by('-transaction_date')
     return render(request,'dashboard/transactions.html',{'transactions': transactions,})
 
 
