@@ -249,9 +249,9 @@ class AccountAdmin(ModelAdmin):
         ('Important Dates', {
             'fields': ('last_login','date_joined',)  # now editable
         }),
-        # ('Two Factor', {
-        #     'fields': ('two_factor_enabled',)
-        # }),
+        ('Two Factor', {
+            'fields': ('two_factor_enabled',)
+        }),
         ('Account Info', {
             'fields': ('account_number', 'pin')
         }),

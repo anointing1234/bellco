@@ -286,7 +286,7 @@
 
 
    <!-- Ultra Modern Page Loader -->
-    {% comment %} <div class="page-loading active">
+     <div class="page-loading active">
         <div class="page-loading-inner">
             <div class="loading-container">
                 <!-- Floating particles background -->
@@ -322,7 +322,7 @@
                 <div class="loading-progress"></div>
             </div>
         </div>
-    </div> {% endcomment %}
+    </div>
 
 
   <!-- layout start -->
@@ -1138,7 +1138,7 @@
             <p class="text-sm text-gray-500">Secure your account with 2FA</p>
           </div>
         </header>
-{% comment %} <form id="twofa-form" action="{% url 'toggle_2fa' %}" method="post" class="space-y-4">
+ <form id="twofa-form" action="{% url 'toggle_2fa' %}" method="post" class="space-y-4">
   {% csrf_token %}
   {% if request.user.two_factor_enabled %}
     <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg">
@@ -1149,7 +1149,7 @@
       Enable 2FA
     </button>
   {% endif %}
-</form> {% endcomment %}
+</form> 
 
 
       </div>
